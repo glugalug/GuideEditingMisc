@@ -1,0 +1,33 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="XMLGuideImporter.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="GrabberCommandLine" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="XMLTVPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="GrabberArguments" Type="System.String" Scope="User">
+      <Value Profile="(Default)" />
+    </Setting>
+    <Setting Name="ChannelNumberXPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">display-name[position()=2]/text()</Value>
+    </Setting>
+    <Setting Name="CallsignXPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">display-name[position()=3]/text()</Value>
+    </Setting>
+    <Setting Name="ServiceNameXPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">display-name[position()=4]/text()</Value>
+    </Setting>
+    <Setting Name="MXFLineupUid" Type="System.String" Scope="User">
+      <Value Profile="(Default)">XMLImportedLineup1</Value>
+    </Setting>
+    <Setting Name="MXFLineupName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">XML Imported Lineup</Value>
+    </Setting>
+    <Setting Name="AffiliateXPath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">display-name[position()=5]/text()</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

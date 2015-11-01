@@ -352,23 +352,13 @@ namespace SchedulesDirectGrabber
             }
         }
 
-        [DataContract]
         public class MXFProgram
         {
             const string kProgramIdMXFPrefix = "!Program!GSD";
             public MXFProgram() { throw new NotImplementedException(); }
             public MXFProgram(DBProgram dbProgram)
             {
-                key_ = dbProgram.programID;
-                title = dbProgram.title;
-                episodeTitle = dbProgram.episodeTitle;
-                description = string.IsNullOrEmpty(dbProgram.description) ? dbProgram.shortDescription: dbProgram.description;
-                shortDescription = dbProgram.shortDescription;
-                language = dbProgram.language;
-                originalAirDate_ = dbProgram.originalAirDate;
-                if (originalAirDate_ != null) originalAirDate_ = originalAirDate_.ToLocalTime();
-                seasonNumber = dbProgram.seasonNumber;
-                episodeNumber = dbProgram.episodeNumber;
+                dbProgram_ = dbProgram;
                 if (dbProgram.keyWords != null)
                 {
                     List<string> keywordIds = new List<string>();
@@ -384,52 +374,33 @@ namespace SchedulesDirectGrabber
                     }
                     keywords = string.Join(",", keywordIds);
                 }
-                isSeries = dbProgram.IsSeries();
                 if (isSeries)
                 {
                     series = SeriesInfoCache.SeriesIDByProgramID(key_);
                 }
 
-                mpaaRating = (int)dbProgram.mpaaRating;
-
-                isMovie = dbProgram.entityType == EntityType.Movie;
-                isPaidProgramming = dbProgram.showType == ShowType.PaidProgramming;
-                isSerial = dbProgram.showType == ShowType.Serial;
-                isShortFilm = dbProgram.showType == ShowType.ShortFilm;
-                isSpecial = dbProgram.showType == ShowType.Special;
-                isSports = dbProgram.entityType == EntityType.Sports;
-                //TODO figure out how to tell if news
-                if (dbProgram.genres != null)
-                {
-                    isNews = dbProgram.genres.Contains("News");
-                    isKids = dbProgram.genres.Contains("Children");
-                    isReality = dbProgram.genres.Contains("Reality");
-                }
-                if (dbProgram.contentAdvisory != null)
-                {
-                    hasStrongSexualContent = dbProgram.contentAdvisory.Contains("Strong Sexual Content");
-                    hasLanguage = dbProgram.contentAdvisory.Contains("Adult Language");
-                    hasAdult = dbProgram.contentAdvisory.Contains("Adult Situations");
-                    hasViolence = dbProgram.contentAdvisory.Contains("Violence");
-                    hasGraphicViolence = dbProgram.contentAdvisory.Contains("Graphic Violence");
-                    hasBriefNudity = dbProgram.contentAdvisory.Contains("Brief Nudity");
-                    hasNudity = dbProgram.contentAdvisory.Contains("Nudity");
-                    hasMildViolence = dbProgram.contentAdvisory.Contains("Mild Violence");
-                    hasRape = dbProgram.contentAdvisory.Contains("Rape");
-                    hasGraphicLanguage = dbProgram.contentAdvisory.Contains("Graphic Language");
-                }
                 if (dbProgram.hasImages)
                 {
                     string imageId = ImageCache.GetSDImageIDByProgramID(key_);
                     if (ImageCache.instance.isImageLoaded(imageId))
                         guideImage = ImageCache.instance.FindOrCreateMXFImageId(imageId);
                 }
-                castAndCrew_ = dbProgram.castAndCrew;
             }
 
-            private readonly string key_;
+            private string key_ { get { return dbProgram_.programID; } }
 
-            private readonly IEnumerable<DBProgram.DBCastMember> castAndCrew_;
+            private IEnumerable<DBProgram.DBCastMember> castAndCrew_ { get { return dbProgram_.castAndCrew; } }
+            private readonly DBProgram dbProgram_;
+
+            private bool GenreContains(string genre)
+            {
+                return dbProgram_.genres != null && dbProgram_.genres.Contains(genre);
+            }
+
+            private bool ContentAdvisoryContains(string contentAdvisory)
+            {
+                return dbProgram_.contentAdvisory != null && dbProgram_.contentAdvisory.Contains(contentAdvisory);
+            }
 
             public class CastAndCrewSerializer : IXmlSerializable
             {
@@ -470,8 +441,6 @@ namespace SchedulesDirectGrabber
                 }
             }
 
-            private DateTime originalAirDate_;
-
             [DataMember(IsRequired = true), XmlAttribute("id")]
             public string mxfId {
                 get { return ProgramCache.instance.GetProgramIndexByKey(key_); }
@@ -485,29 +454,60 @@ namespace SchedulesDirectGrabber
             }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("title")]
-            public string title { get; set; }
-
+            public string title {
+                get { return dbProgram_.title; }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue = false), XmlAttribute("episodeTitle")]
-            public string episodeTitle { get; set; }
+            public string episodeTitle {
+                get { return dbProgram_.episodeTitle; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("description")]
-            public string description { get; set; }
+            public string description {
+                get { return string.IsNullOrEmpty(dbProgram_.description) ? dbProgram_.shortDescription : dbProgram_.description; }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue = false), XmlAttribute("shortDescription")]
-            public string shortDescription { get; set; }
+            public string shortDescription
+            {
+                get { return dbProgram_.shortDescription; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("language")]
-            public string language { get; set; }
+            public string language {
+                get { return dbProgram_.language; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("year"), DefaultValue(0)]
-            public int year { get { return (originalAirDate != null) ? originalAirDate.Year : 0; } set { throw new NotImplementedException(); } }
+            public int year {
+                get { return dbProgram_.originalAirDate != default(DateTime) ? dbProgram_.originalAirDate.Year : 0; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("seasonNumber"), DefaultValue(0)]
-            public int seasonNumber { get; set; }
-            [DataMember(EmitDefaultValue =false), XmlAttribute("episodeNumber"), DefaultValue(0)]
-            public int episodeNumber { get; set; }
+            public int seasonNumber {
+                get { return dbProgram_.seasonNumber; }
+                set { throw new NotImplementedException(); }
+            }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("episodeNumber"), DefaultValue(0)]
+            public int episodeNumber
+            {
+                get { return dbProgram_.episodeNumber; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("originalAirDate")]
-            public DateTime originalAirDate { get { return originalAirDate_; } set { throw new NotImplementedException(); } }
+            public string originalAirDate {
+                get {
+                    return (dbProgram_.originalAirDate != default(DateTime)) 
+                        ? dbProgram_.originalAirDate.ToLocalTime().ToString("o") : null;
+                }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("keywords")]
             public string keywords { get; set; }
@@ -520,10 +520,16 @@ namespace SchedulesDirectGrabber
             public string series { get; set; }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("mpaaRating"), DefaultValue(0)]
-            public int mpaaRating { get; set; }
+            public int mpaaRating {
+                get { return (int)dbProgram_.mpaaRating; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("isMovie"), DefaultValue(false)]
-            public bool isMovie { get; set; }
+            public bool isMovie {
+                get { return dbProgram_.entityType == EntityType.Movie; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("isMiniseries"), DefaultValue(false)]
             public bool isMiniseries {
@@ -538,55 +544,106 @@ namespace SchedulesDirectGrabber
 
             // No idea what this is, for now always false.
             [DataMember(EmitDefaultValue =false), XmlAttribute("isLimitedSeries"), DefaultValue(false)]
-            public bool isLimitedSeries { get; set; }
+            public bool isLimitedSeries {
+                get { return false; }
+                set { throw new NotImplementedException(); }
+            }
 
-            [DataMember(EmitDefaultValue =false), XmlAttribute("isPaidProgramming"), DefaultValue(false)]
-            public bool isPaidProgramming { get; set; }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("isPaidProgramming"), DefaultValue(false)]
+            public bool isPaidProgramming {
+                get { return dbProgram_.showType == ShowType.PaidProgramming; }
+                set { throw new NotImplementedException(); }
+            }
 
-            [DataMember(EmitDefaultValue =false), XmlAttribute("isSerial"), DefaultValue(false)]
-            public bool isSerial { get; set; }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("isSerial"), DefaultValue(false)]
+            public bool isSerial {
+                get { return dbProgram_.showType == ShowType.Serial; }
+                set { throw new NotImplementedException(); }
+            }
 
-            [DataMember(EmitDefaultValue =false), XmlAttribute("isSeries"), DefaultValue(false)]
-            public bool isSeries { get; set; }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("isSeries"), DefaultValue(false)]
+            public bool isSeries {
+                get { return dbProgram_.IsSeries(); }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("isShortFilm"), DefaultValue(false)]
-            public bool isShortFilm { get; set; }
+            public bool isShortFilm {
+                get { return dbProgram_.showType == ShowType.ShortFilm; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("isSpecial"), DefaultValue(false)]
-            public bool isSpecial { get; set; }
+            public bool isSpecial {
+                get { return dbProgram_.showType == ShowType.Special; }
+                set { throw new NotImplementedException(); }
+            }
 
-            [DataMember(EmitDefaultValue =false), XmlAttribute("isSports"), DefaultValue(false)]
-            public bool isSports { get; set; }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("isSports"), DefaultValue(false)]
+            public bool isSports {
+                get { return dbProgram_.entityType == EntityType.Sports; }
+                set { throw new NotImplementedException(); }
+            }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("isNews"), DefaultValue(false)]
-            public bool isNews { get; set; }
+            public bool isNews { get { return GenreContains("News"); } set { throw new NotImplementedException(); } }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("isKids"), DefaultValue(false)]
-            public bool isKids { get; set; }
+            public bool isKids { get { return GenreContains("Children"); } set { throw new NotImplementedException(); } }
 
-            [DataMember(EmitDefaultValue =false), XmlAttribute("isReality"), DefaultValue(false)]
-            public bool isReality { get; set; }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("isReality"), DefaultValue(false)]
+            public bool isReality { get { return GenreContains("Reality"); } set { throw new NotImplementedException(); } }
 
             [DataMember(EmitDefaultValue =false), XmlAttribute("hasAdult"), DefaultValue(false)]
-            public bool hasAdult { get; set; }
-            [DataMember(EmitDefaultValue =false), XmlAttribute("hasStrongSexualContent"), DefaultValue(false)]
-            public bool hasStrongSexualContent { get; set; }
+            public bool hasAdult {
+                get { return ContentAdvisoryContains("Adult Situations"); }
+                set { throw new NotImplementedException(); }
+            }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("hasStrongSexualContent"), DefaultValue(false)]
+            public bool hasStrongSexualContent {
+                get { return ContentAdvisoryContains("Strong Sexual Content"); }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue =false), XmlAttribute("hasLanguage"), DefaultValue(false)]
-            public bool hasLanguage { get; set; }
-            [DataMember(EmitDefaultValue =false), XmlAttribute("hasViolence"), DefaultValue(false)]
-            public bool hasViolence { get; set; }
+            public bool hasLanguage {
+                get { return ContentAdvisoryContains("Adult Language"); }
+                set { throw new NotImplementedException(); }
+            }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("hasViolence"), DefaultValue(false)]
+            public bool hasViolence {
+                get { return ContentAdvisoryContains("Violence"); }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue =false), XmlAttribute("hasGraphicViolence"), DefaultValue(false)]
-            public bool hasGraphicViolence { get; set; }        
-            [DataMember(EmitDefaultValue =false), XmlAttribute("hasBriefNudity"), DefaultValue(false)]
-            public bool hasBriefNudity { get; set; }
+            public bool hasGraphicViolence {
+                get { return ContentAdvisoryContains("Graphic Violence"); }
+                set { throw new NotImplementedException(); }
+            }        
+            [DataMember(EmitDefaultValue = false), XmlAttribute("hasBriefNudity"), DefaultValue(false)]
+            public bool hasBriefNudity {
+                get { return ContentAdvisoryContains("Brief Nudity"); }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue =false), XmlAttribute("hasNudity"), DefaultValue(false)]
-            public bool hasNudity { get; set; }
+            public bool hasNudity {
+                get { return ContentAdvisoryContains("Nudity"); }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue =false), XmlAttribute("hasMildViolence"), DefaultValue(false)]
-            public bool hasMildViolence { get; set; }
+            public bool hasMildViolence {
+                get { return ContentAdvisoryContains("Mild Violence"); }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue =false), XmlAttribute("hasRape"), DefaultValue(false)]
-            public bool hasRape { get; set; }
-            [DataMember(EmitDefaultValue =false), XmlAttribute("hasGraphicLanguage"), DefaultValue(false)]
-            public bool hasGraphicLanguage { get; set; }
+            public bool hasRape {
+                get { return ContentAdvisoryContains("Rape"); }
+                set { throw new NotImplementedException(); }
+            }
+            [DataMember(EmitDefaultValue = false), XmlAttribute("hasGraphicLanguage"), DefaultValue(false)]
+            public bool hasGraphicLanguage {
+                get { return ContentAdvisoryContains("Graphic Language"); }
+                set { throw new NotImplementedException(); }
+            }
             [DataMember(EmitDefaultValue =false), XmlAttribute("guideImage")]
             public string guideImage { get; set; }
 

@@ -25,18 +25,6 @@ namespace SchedulesDirectGrabber.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("")]
-        public string username {
-            get {
-                return ((string)(this["username"]));
-            }
-            set {
-                this["username"] = value;
-            }
-        }
-        
-        [global::System.Configuration.UserScopedSettingAttribute()]
-        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("SchedulesDirectGrabber.config.xml")]
         public string ConfigPath {
             get {

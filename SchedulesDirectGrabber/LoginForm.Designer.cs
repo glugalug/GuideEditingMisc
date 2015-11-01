@@ -54,7 +54,6 @@
             this.UsernameTextBox.Name = "UsernameTextBox";
             this.UsernameTextBox.Size = new System.Drawing.Size(184, 20);
             this.UsernameTextBox.TabIndex = 1;
-            this.UsernameTextBox.Text = global::SchedulesDirectGrabber.Properties.Settings.Default.username;
             // 
             // label2
             // 

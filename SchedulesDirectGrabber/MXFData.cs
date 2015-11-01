@@ -123,8 +123,8 @@ namespace SchedulesDirectGrabber
             public EnumerableSerializationWrapper<StationCache.MXFService> services =
                 new EnumerableSerializationWrapper<StationCache.MXFService>(StationCache.instance.GetMXFServices());
 
-            /*           [DataMember, XmlElement(ElementName = "ScheduleEntries")]
-                       public ScheduleEntries scheduleEntries = new ScheduleEntries(); */
+            [XmlAnyElement]
+            public ScheduleCache.ScheduleSerializer scheduleSerializer = new ScheduleCache.ScheduleSerializer();
 
             [XmlArray("Lineups"), XmlArrayItem("Lineup")]
             public EnumerableSerializationWrapper<ConfigManager.MXFLineup> lineups =

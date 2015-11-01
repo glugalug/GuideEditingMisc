@@ -7,10 +7,12 @@ using Microsoft.MediaCenter.Guide;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using System.ComponentModel;
+using System.Xml;
+using System.Xml.Schema;
 
 namespace SchedulesDirectGrabber
 {
-    internal class ScheduleCache
+    public class ScheduleCache
     {
         private static ScheduleCache instance_ = new ScheduleCache();
         internal static ScheduleCache instance { get { return instance_; } }
@@ -49,8 +51,11 @@ namespace SchedulesDirectGrabber
             HashSet<string> uncachedStationIDs = new HashSet<string>();
             foreach(string stationID in stationIDs)
             {
-                if (!cachedSchedule_.ContainsKey(stationID)) uncachedStationIDs.Add(stationID);
-                cachedSchedule_[stationID] = new SortedDictionary<DateTime, SDStationScheduleProgramEntry>();
+                if (!cachedSchedule_.ContainsKey(stationID))
+                {
+                    uncachedStationIDs.Add(stationID);
+                    cachedSchedule_[stationID] = new SortedDictionary<DateTime, SDStationScheduleProgramEntry>();
+                }
             }
             var stationSchedules = DBManager.instance.GetStationSchedules(uncachedStationIDs);
             foreach(var stationSchedule in stationSchedules)
@@ -205,6 +210,64 @@ namespace SchedulesDirectGrabber
             return stationMD5Responses;
         }
 
+        public class ScheduleSerializer : IXmlSerializable
+        {
+            public ScheduleSerializer() { }
+
+            private ScheduleCache scheduleCache { get { return ScheduleCache.instance; } }
+            private StationCache stationCache { get { return StationCache.instance; } }
+
+            XmlSchema IXmlSerializable.GetSchema()
+            {
+                return null;
+            }
+
+            void IXmlSerializable.ReadXml(XmlReader reader)
+            {   // Class is write-only for generating MXF
+                throw new NotImplementedException();
+            }
+
+            void IXmlSerializable.WriteXml(XmlWriter writer)
+            {
+                // Overwrite seriealized element name for serialized MXFScheduleEntries.
+/*                XmlElementAttribute myElementAttribute = new XmlElementAttribute();
+                myElementAttribute.ElementName = "ScheduleEntry";
+                XmlAttributes myAttributes = new XmlAttributes();
+                myAttributes.XmlElements.Add(myElementAttribute);
+                XmlAttributeOverrides myOverrides = new XmlAttributeOverrides();
+                myOverrides.Add(typeof(ScheduleSerializer), myAttributes); */
+                XmlSerializer entrySerializer = new XmlSerializer(typeof(MXFScheduleEntry)); 
+                foreach (var stationAndSchedules in scheduleCache.GetSchedulesByStation(new HashSet<string>(stationCache.GetStationIds())))
+                {
+                    string stationId = stationAndSchedules.Key;
+                    string mxfServiceId = stationCache.GetServiceIdByStationId(stationId);
+                    var schedule = stationAndSchedules.Value;
+                    if (schedule.Count == 0) continue;
+                    writer.WriteStartElement("ScheduleEntries");
+                    writer.WriteAttributeString("service", mxfServiceId);
+                    DateTime previousEndTime = schedule.Keys.First();
+                    bool isFirstElement = true;
+                    foreach (var dateAndEntry in schedule)
+                    {
+                        DateTime startTime = dateAndEntry.Key;
+                        DateTime endTime = startTime.AddSeconds(dateAndEntry.Value.duration);
+                        // Check for gap between the start of this entry and the end of the previous one.
+                        bool foundGap = startTime != previousEndTime;
+                        if (!isFirstElement && foundGap)
+                        {
+                            writer.WriteEndElement();  // close ScheduleEntries element
+                            writer.WriteStartElement("ScheduleEntries");  // start next group
+                            writer.WriteAttributeString("service", mxfServiceId);
+                        }
+                        entrySerializer.Serialize(writer, new MXFScheduleEntry(dateAndEntry.Value, foundGap || isFirstElement));
+                        previousEndTime = endTime;
+                        isFirstElement = false;
+                    }
+                    writer.WriteEndElement();  // Close final ScheduleEntries element.
+                }
+            }
+        }
+
         [DataContract]
         private class SDScheduleStationRequest
         {
@@ -271,7 +334,7 @@ namespace SchedulesDirectGrabber
 
         // TODO: Create new Schedule DB format to decouple this from the SchedulesDirect native format.
         [DataContract]
-        internal class SDStationScheduleProgramEntry
+        public class SDStationScheduleProgramEntry
         {
             [DataMember(Name = "programID", IsRequired = true)]
             public string programID { get; set; }
@@ -346,11 +409,11 @@ namespace SchedulesDirectGrabber
 
             private bool HasAudioProp(string propertyName)
             {
-                return (bool)audioProperties?.Contains(propertyName);
+                return audioProperties != null && audioProperties.Contains(propertyName);
             }
             private bool HasVideoProp(string propertyName)
             {
-                return (bool)videoProperties?.Contains(propertyName);
+                return videoProperties != null && videoProperties.Contains(propertyName);
             }
             // Determine audio format enum for MXF from audioProperties
             public AudioFormat WMCAudioFormat()
@@ -366,17 +429,17 @@ namespace SchedulesDirectGrabber
             public bool IsCC() { return HasAudioProp("cc"); }
             public bool IsDVS() { return HasAudioProp("dvs"); }
             public bool IsEnhanced() { return HasVideoProp("enhanced"); }
-            public bool IsFinale() { return (bool)isPremiereOrFinale?.Contains("Finale"); }
+            public bool IsFinale() { return isPremiereOrFinale != null && isPremiereOrFinale.Contains("Finale"); }
             public bool IsHD() { return HasVideoProp("hdtv"); }
             public bool IsLetterBox() { return HasVideoProp("letterbox"); }
             public bool IsLive() { return liveTapeDelay == "Live"; }
-            public bool IsPremiere() { return (bool)isPremiereOrFinale?.Contains("Premiere"); }
+            public bool IsPremiere() { return isPremiereOrFinale != null && isPremiereOrFinale.Contains("Premiere"); }
             public bool IsRepeat() { return !isNew; }
             public bool IsSubtitled() { return HasVideoProp("subtitled"); }
             public bool IsTape() { return liveTapeDelay == "Tape"; }
         }
 
-        [DataContract(Name ="ScheduleEntry")]
+        [XmlRoot("ScheduleEntry")]
         public class MXFScheduleEntry
         {
             public MXFScheduleEntry() { }
@@ -394,11 +457,11 @@ namespace SchedulesDirectGrabber
             }
 
             [XmlAttribute("startTime"), DataMember(EmitDefaultValue =false)]
-            public Nullable<DateTime> startTime
+            public string startTime  // Using a string rather than a date time so it can be sometimes not emitted.
             {
                 get
                 {
-                    if (isFirstInGroup_) return sdProgramEntry_.airDateTime;
+                    if (isFirstInGroup_) return sdProgramEntry_.airDateTime.ToString("o");
                     return null;
                 }
                 set { throw new NotImplementedException(); }

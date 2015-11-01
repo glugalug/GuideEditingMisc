@@ -20,6 +20,7 @@ namespace SchedulesDirectGrabber
 {
     using System.Xml.Schema;
     using LineupConfig = ConfigManager.LineupConfig;
+    using ScannedLineupConfig = ConfigManager.ScannedLineupConfig;
     using SDStation = StationCache.SDStation;
 
     public partial class ConfigForm : Form
@@ -76,7 +77,7 @@ namespace SchedulesDirectGrabber
         
         private Lineup selected_scanned_lineup { get { return ScannedLineupSelectionComboBox.SelectedItem as Lineup; } }
 
-        private ConfigManager.ScannedLineupConfig selected_scanned_lineup_config
+        private ScannedLineupConfig selected_scanned_lineup_config
         {
             get
             {
@@ -126,10 +127,10 @@ namespace SchedulesDirectGrabber
             ResetConfigWMILineupCache();
         }
 
-        private ConfigManager.ScannedLineupConfig FindOrCreateConfigForSelectedScannedLineup()
+        private ScannedLineupConfig FindOrCreateConfigForSelectedScannedLineup()
         {
             if (selected_scanned_lineup_config != null) return selected_scanned_lineup_config;
-            ConfigManager.ScannedLineupConfig scanned_lineup_config = new ConfigManager.ScannedLineupConfig();
+            ScannedLineupConfig scanned_lineup_config = new ScannedLineupConfig();
             scanned_lineup_config.id = selected_scanned_lineup.Id;
             config.scanned_lineups.Add(scanned_lineup_config);
             return scanned_lineup_config;
@@ -232,8 +233,16 @@ namespace SchedulesDirectGrabber
 
         private void ScannedLineupSelectionComboBox_SelectedValueChanged(object sender, EventArgs e)
         {
+            ScannedLineupConfigurationGroupBox.Text =
+                string.Format("Configuration For Lineup \"{0}\"", ScannedLineupSelectionComboBox.SelectedItem?.ToString());
             UpdateSDLineupAssociationsComboBox();
             UpdateTunerAssociationCheckboxes();
+            UpdateExistingChannelCleanupComboBox();
+        }
+
+        private void UpdateExistingChannelCleanupComboBox()
+        {
+            ExistingChannelCleanupComboBox.SelectedIndex = (int)selected_scanned_lineup_config.existingChannelCleanup;
         }
 
         private Country selected_country { get { return CountryComboBox.SelectedItem as Country; } }
@@ -474,23 +483,7 @@ namespace SchedulesDirectGrabber
 
         private void FetchButton_Click(object sender, EventArgs e)
         {
-            /*HashSet<string> stations = new HashSet<string>();
-            foreach(var station in SDChannelReader.GetChannelListByLineupUri(channelSettingsLineup.sdLineup.uri).stations)
-                stations.Add(station.stationID);
-            IEnumerable<ProgramCache.DBProgram> programs = ScheduleCache.instance.GetAllProgramsForStations(stations);
-            ImageCache.instance.GetAllImagesForPrograms(programs);
-            SeriesInfoCache.instance.FetchSeriesInfosForPrograms(programs); */
-            StationCache.instance.PopulateFromConfig();
-            IEnumerable<ProgramCache.DBProgram> programs = 
-                ScheduleCache.instance.GetAllProgramsForStations(new HashSet<string>(StationCache.instance.GetStationIds()));
-            SeriesInfoCache.instance.FetchSeriesInfosForPrograms(programs);
-            ImageCache.instance.GetAllImagesForPrograms(programs);
-            XmlSerializer xmlSerializer = new XmlSerializer(typeof(MXF));
-            using (TextWriter writer = new StreamWriter("mxf.xml"))
-            {
-                xmlSerializer.Serialize(writer, new MXF());
-                writer.Close();
-            }
+            MXF.BuildMxf();
         }
 
         private void ChannelSettingsDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -534,6 +527,12 @@ namespace SchedulesDirectGrabber
                     break;
             }
 
+        }
+
+        private void ExistingChannelCleanupComboBox_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            selected_scanned_lineup_config.existingChannelCleanup =
+                (ScannedLineupConfig.ExistingChannelCleanupOption)ExistingChannelCleanupComboBox.SelectedIndex;
         }
     }
 }

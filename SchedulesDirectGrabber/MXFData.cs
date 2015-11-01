@@ -5,12 +5,28 @@ using System.Runtime.Serialization;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+using System.IO;
 
 namespace SchedulesDirectGrabber
 {
     [DataContract, XmlRoot("MXF")]
     public class MXF
     {
+        internal static void BuildMxf()
+        {
+            StationCache.instance.PopulateFromConfig();
+            IEnumerable<ProgramCache.DBProgram> programs =
+                ScheduleCache.instance.GetAllProgramsForStations(new HashSet<string>(StationCache.instance.GetStationIds()));
+            SeriesInfoCache.instance.FetchSeriesInfosForPrograms(programs);
+            ImageCache.instance.GetAllImagesForPrograms(programs);
+            XmlSerializer xmlSerializer = new XmlSerializer(typeof(MXF));
+            using (TextWriter writer = new StreamWriter("mxf.xml"))
+            {
+                xmlSerializer.Serialize(writer, new MXF());
+                writer.Close();
+            }
+        }
+
         public class EnumerableSerializationWrapper<T> : IEnumerable<T>
         {
             private readonly IEnumerable<T> wrapped_;

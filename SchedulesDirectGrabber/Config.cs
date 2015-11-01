@@ -448,6 +448,16 @@ namespace SchedulesDirectGrabber
             public bool addAssociation;
             [DataMember(Name = "removeOtherAssociations")]
             public bool removeOtherAssociations;
+
+            public enum ExistingChannelCleanupOption
+            {
+                RemoveAutomaticallyAddedChannels,
+                RemoveAllExistingChannels,
+                DoNotRemoveExistingChannels
+            }
+
+            [DataMember(Name = "existingChannelCleanup")]
+            public ExistingChannelCleanupOption existingChannelCleanup { get; set; }
         }
 
         private SDGrabberConfig config_;

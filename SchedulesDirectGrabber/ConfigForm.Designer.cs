@@ -28,14 +28,15 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle9 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle10 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle11 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle12 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle13 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle14 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle15 = new System.Windows.Forms.DataGridViewCellStyle();
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle16 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ConfigForm));
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle33 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle34 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle35 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle36 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle37 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle38 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle39 = new System.Windows.Forms.DataGridViewCellStyle();
+            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle40 = new System.Windows.Forms.DataGridViewCellStyle();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.LineupSelectionTabPage = new System.Windows.Forms.TabPage();
             this.LineupSelectionSplitContainer = new System.Windows.Forms.SplitContainer();
@@ -65,7 +66,6 @@
             this.AssociateSchedulesDirectLineupCheckbox = new System.Windows.Forms.CheckBox();
             this.label5 = new System.Windows.Forms.Label();
             this.ChannelSettingsTabPage = new System.Windows.Forms.TabPage();
-            this.ChannelSettingsGridSizingSplitter = new System.Windows.Forms.SplitContainer();
             this.ChannelSettingsDataGridView = new System.Windows.Forms.DataGridView();
             this.LogoCol = new System.Windows.Forms.DataGridViewImageColumn();
             this.StationIDCol = new System.Windows.Forms.DataGridViewTextBoxColumn();
@@ -86,6 +86,10 @@
             this.MXFExportButton = new System.Windows.Forms.Button();
             this.ScheduledRecordingsTabPage = new System.Windows.Forms.TabPage();
             this.SaveButton = new System.Windows.Forms.Button();
+            this.helpProvider1 = new System.Windows.Forms.HelpProvider();
+            this.ScannedLineupConfigurationGroupBox = new System.Windows.Forms.GroupBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.ExistingChannelCleanupComboBox = new System.Windows.Forms.ComboBox();
             this.tabControl1.SuspendLayout();
             this.LineupSelectionTabPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.LineupSelectionSplitContainer)).BeginInit();
@@ -100,12 +104,9 @@
             this.panel2.SuspendLayout();
             this.TunerAssociationGroupBox.SuspendLayout();
             this.ChannelSettingsTabPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.ChannelSettingsGridSizingSplitter)).BeginInit();
-            this.ChannelSettingsGridSizingSplitter.Panel1.SuspendLayout();
-            this.ChannelSettingsGridSizingSplitter.Panel2.SuspendLayout();
-            this.ChannelSettingsGridSizingSplitter.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.ChannelSettingsDataGridView)).BeginInit();
             this.MXFImportTabPage.SuspendLayout();
+            this.ScannedLineupConfigurationGroupBox.SuspendLayout();
             this.SuspendLayout();
             // 
             // tabControl1
@@ -320,9 +321,9 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.AddLineupForDownloadButton.Enabled = false;
             this.AddLineupForDownloadButton.Font = new System.Drawing.Font("Microsoft Sans Serif", 8F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.AddLineupForDownloadButton.Location = new System.Drawing.Point(-3, 92);
+            this.AddLineupForDownloadButton.Location = new System.Drawing.Point(3, 92);
             this.AddLineupForDownloadButton.Name = "AddLineupForDownloadButton";
-            this.AddLineupForDownloadButton.Size = new System.Drawing.Size(116, 33);
+            this.AddLineupForDownloadButton.Size = new System.Drawing.Size(110, 33);
             this.AddLineupForDownloadButton.TabIndex = 7;
             this.AddLineupForDownloadButton.Text = "Download >>";
             this.AddLineupForDownloadButton.UseVisualStyleBackColor = true;
@@ -364,12 +365,9 @@
             // 
             // TunerAssociationGroupBox
             // 
-            this.TunerAssociationGroupBox.Controls.Add(this.RemoveAssociationCheckBox);
+            this.TunerAssociationGroupBox.Controls.Add(this.ScannedLineupConfigurationGroupBox);
             this.TunerAssociationGroupBox.Controls.Add(this.label4);
             this.TunerAssociationGroupBox.Controls.Add(this.ScannedLineupSelectionComboBox);
-            this.TunerAssociationGroupBox.Controls.Add(this.AssociatedSDLineupComboBox);
-            this.TunerAssociationGroupBox.Controls.Add(this.AssociateSchedulesDirectLineupCheckbox);
-            this.TunerAssociationGroupBox.Controls.Add(this.label5);
             this.TunerAssociationGroupBox.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TunerAssociationGroupBox.Location = new System.Drawing.Point(0, 0);
             this.TunerAssociationGroupBox.Name = "TunerAssociationGroupBox";
@@ -383,11 +381,14 @@
             this.RemoveAssociationCheckBox.AutoSize = true;
             this.RemoveAssociationCheckBox.Checked = true;
             this.RemoveAssociationCheckBox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.RemoveAssociationCheckBox.Location = new System.Drawing.Point(12, 108);
+            this.helpProvider1.SetHelpString(this.RemoveAssociationCheckBox, resources.GetString("RemoveAssociationCheckBox.HelpString"));
+            this.RemoveAssociationCheckBox.Location = new System.Drawing.Point(9, 69);
             this.RemoveAssociationCheckBox.Name = "RemoveAssociationCheckBox";
-            this.RemoveAssociationCheckBox.Size = new System.Drawing.Size(361, 17);
+            this.helpProvider1.SetShowHelp(this.RemoveAssociationCheckBox, true);
+            this.RemoveAssociationCheckBox.Size = new System.Drawing.Size(479, 17);
             this.RemoveAssociationCheckBox.TabIndex = 5;
-            this.RemoveAssociationCheckBox.Text = "Remove any other lineup associations for these tuners after MXF import";
+            this.RemoveAssociationCheckBox.Text = "Remove any other lineup associations for these tuners after MXF import  (strongly" +
+    " recommended)";
             this.RemoveAssociationCheckBox.UseVisualStyleBackColor = true;
             // 
             // label4
@@ -403,9 +404,11 @@
             // 
             this.ScannedLineupSelectionComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ScannedLineupSelectionComboBox.FormattingEnabled = true;
+            this.helpProvider1.SetHelpString(this.ScannedLineupSelectionComboBox, "Set of tuners which the options shown below currently apply to");
             this.ScannedLineupSelectionComboBox.Location = new System.Drawing.Point(216, 22);
             this.ScannedLineupSelectionComboBox.Name = "ScannedLineupSelectionComboBox";
-            this.ScannedLineupSelectionComboBox.Size = new System.Drawing.Size(248, 21);
+            this.helpProvider1.SetShowHelp(this.ScannedLineupSelectionComboBox, true);
+            this.ScannedLineupSelectionComboBox.Size = new System.Drawing.Size(512, 21);
             this.ScannedLineupSelectionComboBox.TabIndex = 1;
             this.ScannedLineupSelectionComboBox.SelectedValueChanged += new System.EventHandler(this.ScannedLineupSelectionComboBox_SelectedValueChanged);
             // 
@@ -413,9 +416,12 @@
             // 
             this.AssociatedSDLineupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.AssociatedSDLineupComboBox.FormattingEnabled = true;
-            this.AssociatedSDLineupComboBox.Location = new System.Drawing.Point(350, 58);
+            this.helpProvider1.SetHelpString(this.AssociatedSDLineupComboBox, "Determines the set of channels that will be associated with the scanned lineup tu" +
+        "ners by this app.");
+            this.AssociatedSDLineupComboBox.Location = new System.Drawing.Point(347, 19);
             this.AssociatedSDLineupComboBox.Name = "AssociatedSDLineupComboBox";
-            this.AssociatedSDLineupComboBox.Size = new System.Drawing.Size(248, 21);
+            this.helpProvider1.SetShowHelp(this.AssociatedSDLineupComboBox, true);
+            this.AssociatedSDLineupComboBox.Size = new System.Drawing.Size(378, 21);
             this.AssociatedSDLineupComboBox.TabIndex = 4;
             this.AssociatedSDLineupComboBox.SelectedValueChanged += new System.EventHandler(this.AssociatedSDLineupComboBox_SelectedValueChanged);
             // 
@@ -424,8 +430,10 @@
             this.AssociateSchedulesDirectLineupCheckbox.AutoSize = true;
             this.AssociateSchedulesDirectLineupCheckbox.Checked = true;
             this.AssociateSchedulesDirectLineupCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.AssociateSchedulesDirectLineupCheckbox.Location = new System.Drawing.Point(12, 85);
+            this.helpProvider1.SetHelpString(this.AssociateSchedulesDirectLineupCheckbox, resources.GetString("AssociateSchedulesDirectLineupCheckbox.HelpString"));
+            this.AssociateSchedulesDirectLineupCheckbox.Location = new System.Drawing.Point(9, 46);
             this.AssociateSchedulesDirectLineupCheckbox.Name = "AssociateSchedulesDirectLineupCheckbox";
+            this.helpProvider1.SetShowHelp(this.AssociateSchedulesDirectLineupCheckbox, true);
             this.AssociateSchedulesDirectLineupCheckbox.Size = new System.Drawing.Size(425, 17);
             this.AssociateSchedulesDirectLineupCheckbox.TabIndex = 2;
             this.AssociateSchedulesDirectLineupCheckbox.Text = "Associate Schedules Direct lineup with these tuners in media center after MXF imp" +
@@ -436,7 +444,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 61);
+            this.label5.Location = new System.Drawing.Point(6, 22);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(335, 13);
             this.label5.TabIndex = 3;
@@ -444,7 +452,7 @@
             // 
             // ChannelSettingsTabPage
             // 
-            this.ChannelSettingsTabPage.Controls.Add(this.ChannelSettingsGridSizingSplitter);
+            this.ChannelSettingsTabPage.Controls.Add(this.ChannelSettingsDataGridView);
             this.ChannelSettingsTabPage.Controls.Add(this.ChannelSettingsLineupSelectionCombo);
             this.ChannelSettingsTabPage.Controls.Add(this.label6);
             this.ChannelSettingsTabPage.Location = new System.Drawing.Point(4, 22);
@@ -452,26 +460,6 @@
             this.ChannelSettingsTabPage.Size = new System.Drawing.Size(989, 655);
             this.ChannelSettingsTabPage.TabIndex = 2;
             this.ChannelSettingsTabPage.Text = "Channel Settings";
-            // 
-            // ChannelSettingsGridSizingSplitter
-            // 
-            this.ChannelSettingsGridSizingSplitter.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ChannelSettingsGridSizingSplitter.Location = new System.Drawing.Point(0, 36);
-            this.ChannelSettingsGridSizingSplitter.Name = "ChannelSettingsGridSizingSplitter";
-            this.ChannelSettingsGridSizingSplitter.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // ChannelSettingsGridSizingSplitter.Panel1
-            // 
-            this.ChannelSettingsGridSizingSplitter.Panel1.Controls.Add(this.ChannelSettingsDataGridView);
-            // 
-            // ChannelSettingsGridSizingSplitter.Panel2
-            // 
-            this.ChannelSettingsGridSizingSplitter.Panel2.Controls.Add(this.FetchButton);
-            this.ChannelSettingsGridSizingSplitter.Size = new System.Drawing.Size(989, 619);
-            this.ChannelSettingsGridSizingSplitter.SplitterDistance = 564;
-            this.ChannelSettingsGridSizingSplitter.TabIndex = 2;
             // 
             // ChannelSettingsDataGridView
             // 
@@ -496,12 +484,12 @@
             this.DownloadCol,
             this.IncludeInGuideCol});
             this.ChannelSettingsDataGridView.EditMode = System.Windows.Forms.DataGridViewEditMode.EditOnEnter;
-            this.ChannelSettingsDataGridView.Location = new System.Drawing.Point(0, 3);
+            this.ChannelSettingsDataGridView.Location = new System.Drawing.Point(3, 36);
             this.ChannelSettingsDataGridView.Name = "ChannelSettingsDataGridView";
             this.ChannelSettingsDataGridView.RowTemplate.Height = 50;
             this.ChannelSettingsDataGridView.RowTemplate.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.ChannelSettingsDataGridView.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.ChannelSettingsDataGridView.Size = new System.Drawing.Size(989, 561);
+            this.ChannelSettingsDataGridView.Size = new System.Drawing.Size(983, 619);
             this.ChannelSettingsDataGridView.TabIndex = 0;
             this.ChannelSettingsDataGridView.VirtualMode = true;
             this.ChannelSettingsDataGridView.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.ChannelSettingsDataGridView_CellClick);
@@ -518,8 +506,8 @@
             // 
             // StationIDCol
             // 
-            dataGridViewCellStyle9.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.StationIDCol.DefaultCellStyle = dataGridViewCellStyle9;
+            dataGridViewCellStyle33.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.StationIDCol.DefaultCellStyle = dataGridViewCellStyle33;
             this.StationIDCol.HeaderText = "StationID";
             this.StationIDCol.Name = "StationIDCol";
             this.StationIDCol.ReadOnly = true;
@@ -527,16 +515,16 @@
             // 
             // StationNameCol
             // 
-            dataGridViewCellStyle10.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.StationNameCol.DefaultCellStyle = dataGridViewCellStyle10;
+            dataGridViewCellStyle34.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.StationNameCol.DefaultCellStyle = dataGridViewCellStyle34;
             this.StationNameCol.HeaderText = "Station Name";
             this.StationNameCol.Name = "StationNameCol";
             this.StationNameCol.ReadOnly = true;
             // 
             // CallSignCol
             // 
-            dataGridViewCellStyle11.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.CallSignCol.DefaultCellStyle = dataGridViewCellStyle11;
+            dataGridViewCellStyle35.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.CallSignCol.DefaultCellStyle = dataGridViewCellStyle35;
             this.CallSignCol.HeaderText = "Callsign";
             this.CallSignCol.Name = "CallSignCol";
             this.CallSignCol.ReadOnly = true;
@@ -544,9 +532,9 @@
             // 
             // DefaultGuideChannelsCol
             // 
-            dataGridViewCellStyle12.BackColor = System.Drawing.SystemColors.ButtonFace;
-            dataGridViewCellStyle12.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.DefaultGuideChannelsCol.DefaultCellStyle = dataGridViewCellStyle12;
+            dataGridViewCellStyle36.BackColor = System.Drawing.SystemColors.ButtonFace;
+            dataGridViewCellStyle36.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.DefaultGuideChannelsCol.DefaultCellStyle = dataGridViewCellStyle36;
             this.DefaultGuideChannelsCol.HeaderText = "Channel Numbers (default)";
             this.DefaultGuideChannelsCol.Name = "DefaultGuideChannelsCol";
             this.DefaultGuideChannelsCol.ReadOnly = true;
@@ -555,8 +543,8 @@
             // 
             // EffectiveGuideChannelsCol
             // 
-            dataGridViewCellStyle13.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
-            this.EffectiveGuideChannelsCol.DefaultCellStyle = dataGridViewCellStyle13;
+            dataGridViewCellStyle37.WrapMode = System.Windows.Forms.DataGridViewTriState.True;
+            this.EffectiveGuideChannelsCol.DefaultCellStyle = dataGridViewCellStyle37;
             this.EffectiveGuideChannelsCol.HeaderText = "Channel Numbers";
             this.EffectiveGuideChannelsCol.Name = "EffectiveGuideChannelsCol";
             this.EffectiveGuideChannelsCol.ReadOnly = true;
@@ -565,9 +553,9 @@
             // 
             // ChannelNumberOverrideCol
             // 
-            dataGridViewCellStyle14.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle14.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.ChannelNumberOverrideCol.DefaultCellStyle = dataGridViewCellStyle14;
+            dataGridViewCellStyle38.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle38.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.ChannelNumberOverrideCol.DefaultCellStyle = dataGridViewCellStyle38;
             this.ChannelNumberOverrideCol.HeaderText = "Override";
             this.ChannelNumberOverrideCol.Name = "ChannelNumberOverrideCol";
             this.ChannelNumberOverrideCol.ReadOnly = true;
@@ -578,8 +566,8 @@
             // 
             // DefaultPhysicalChannelsCol
             // 
-            dataGridViewCellStyle15.BackColor = System.Drawing.SystemColors.ButtonFace;
-            this.DefaultPhysicalChannelsCol.DefaultCellStyle = dataGridViewCellStyle15;
+            dataGridViewCellStyle39.BackColor = System.Drawing.SystemColors.ButtonFace;
+            this.DefaultPhysicalChannelsCol.DefaultCellStyle = dataGridViewCellStyle39;
             this.DefaultPhysicalChannelsCol.HeaderText = "Physical Channels (Default)";
             this.DefaultPhysicalChannelsCol.Name = "DefaultPhysicalChannelsCol";
             this.DefaultPhysicalChannelsCol.ReadOnly = true;
@@ -596,9 +584,9 @@
             // 
             // PhysicalChannelOverrideButton
             // 
-            dataGridViewCellStyle16.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
-            dataGridViewCellStyle16.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.PhysicalChannelOverrideButton.DefaultCellStyle = dataGridViewCellStyle16;
+            dataGridViewCellStyle40.Alignment = System.Windows.Forms.DataGridViewContentAlignment.MiddleCenter;
+            dataGridViewCellStyle40.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.PhysicalChannelOverrideButton.DefaultCellStyle = dataGridViewCellStyle40;
             this.PhysicalChannelOverrideButton.HeaderText = "Override";
             this.PhysicalChannelOverrideButton.Name = "PhysicalChannelOverrideButton";
             this.PhysicalChannelOverrideButton.ReadOnly = true;
@@ -625,7 +613,7 @@
             // 
             this.FetchButton.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.FetchButton.Location = new System.Drawing.Point(227, 25);
+            this.FetchButton.Location = new System.Drawing.Point(700, 583);
             this.FetchButton.Name = "FetchButton";
             this.FetchButton.Size = new System.Drawing.Size(247, 23);
             this.FetchButton.TabIndex = 0;
@@ -654,6 +642,7 @@
             // 
             // MXFImportTabPage
             // 
+            this.MXFImportTabPage.Controls.Add(this.FetchButton);
             this.MXFImportTabPage.Controls.Add(this.MXFExportButton);
             this.MXFImportTabPage.Location = new System.Drawing.Point(4, 22);
             this.MXFImportTabPage.Name = "MXFImportTabPage";
@@ -691,6 +680,48 @@
             this.SaveButton.UseVisualStyleBackColor = true;
             this.SaveButton.Click += new System.EventHandler(this.SaveButton_Click);
             // 
+            // ScannedLineupConfigurationGroupBox
+            // 
+            this.ScannedLineupConfigurationGroupBox.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ScannedLineupConfigurationGroupBox.Controls.Add(this.ExistingChannelCleanupComboBox);
+            this.ScannedLineupConfigurationGroupBox.Controls.Add(this.label3);
+            this.ScannedLineupConfigurationGroupBox.Controls.Add(this.AssociatedSDLineupComboBox);
+            this.ScannedLineupConfigurationGroupBox.Controls.Add(this.RemoveAssociationCheckBox);
+            this.ScannedLineupConfigurationGroupBox.Controls.Add(this.label5);
+            this.ScannedLineupConfigurationGroupBox.Controls.Add(this.AssociateSchedulesDirectLineupCheckbox);
+            this.ScannedLineupConfigurationGroupBox.Location = new System.Drawing.Point(3, 59);
+            this.ScannedLineupConfigurationGroupBox.Name = "ScannedLineupConfigurationGroupBox";
+            this.ScannedLineupConfigurationGroupBox.Size = new System.Drawing.Size(977, 284);
+            this.ScannedLineupConfigurationGroupBox.TabIndex = 6;
+            this.ScannedLineupConfigurationGroupBox.TabStop = false;
+            this.ScannedLineupConfigurationGroupBox.Text = "Configuration for Lineup <LineupName>";
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(6, 99);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(132, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "Existing Channel Cleanupl:";
+            // 
+            // ExistingChannelCleanupComboBox
+            // 
+            this.ExistingChannelCleanupComboBox.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ExistingChannelCleanupComboBox.FormattingEnabled = true;
+            this.ExistingChannelCleanupComboBox.Items.AddRange(new object[] {
+            "Remove existing channels in this scanned lineup which appear to be automatically " +
+                "added by WMC",
+            "Remove all existing channels in the lineup, including UserAdded channels.",
+            "Do not remove any existing channels."});
+            this.ExistingChannelCleanupComboBox.Location = new System.Drawing.Point(145, 96);
+            this.ExistingChannelCleanupComboBox.Name = "ExistingChannelCleanupComboBox";
+            this.ExistingChannelCleanupComboBox.Size = new System.Drawing.Size(580, 21);
+            this.ExistingChannelCleanupComboBox.TabIndex = 7;
+            this.ExistingChannelCleanupComboBox.SelectedIndexChanged += new System.EventHandler(this.ExistingChannelCleanupComboBox_SelectedIndexChanged);
+            // 
             // ConfigForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -717,12 +748,10 @@
             this.TunerAssociationGroupBox.PerformLayout();
             this.ChannelSettingsTabPage.ResumeLayout(false);
             this.ChannelSettingsTabPage.PerformLayout();
-            this.ChannelSettingsGridSizingSplitter.Panel1.ResumeLayout(false);
-            this.ChannelSettingsGridSizingSplitter.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.ChannelSettingsGridSizingSplitter)).EndInit();
-            this.ChannelSettingsGridSizingSplitter.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.ChannelSettingsDataGridView)).EndInit();
             this.MXFImportTabPage.ResumeLayout(false);
+            this.ScannedLineupConfigurationGroupBox.ResumeLayout(false);
+            this.ScannedLineupConfigurationGroupBox.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -763,7 +792,6 @@
         private System.Windows.Forms.Button SubscribeButton;
         private System.Windows.Forms.SplitContainer LineupSelectionSplitContainer;
         private System.Windows.Forms.GroupBox TunerAssociationGroupBox;
-        private System.Windows.Forms.SplitContainer ChannelSettingsGridSizingSplitter;
         private System.Windows.Forms.DataGridView ChannelSettingsDataGridView;
         private System.Windows.Forms.Button FetchButton;
         private System.Windows.Forms.Button MXFExportButton;
@@ -779,6 +807,10 @@
         private System.Windows.Forms.DataGridViewButtonColumn PhysicalChannelOverrideButton;
         private System.Windows.Forms.DataGridViewCheckBoxColumn DownloadCol;
         private System.Windows.Forms.DataGridViewCheckBoxColumn IncludeInGuideCol;
+        private System.Windows.Forms.GroupBox ScannedLineupConfigurationGroupBox;
+        private System.Windows.Forms.HelpProvider helpProvider1;
+        private System.Windows.Forms.ComboBox ExistingChannelCleanupComboBox;
+        private System.Windows.Forms.Label label3;
     }
 }
 

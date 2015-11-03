@@ -483,7 +483,8 @@ namespace SchedulesDirectGrabber
 
         private void FetchButton_Click(object sender, EventArgs e)
         {
-            MXF.BuildMxf();
+            //MXFData.BuildMxf();
+            MXFData.ImportMxf();
         }
 
         private void ChannelSettingsDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -511,7 +512,7 @@ namespace SchedulesDirectGrabber
 
         private void ChannelSettingsDataGridView_CellClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= stationIDs_.Count()) return;
+            if (e.RowIndex < 0 || e.RowIndex >= stationIDs_.Count()) return;
             ChannelSettingsColumn column = GetColumnByIndex(e.ColumnIndex);
             string stationID = stationIDs_[e.RowIndex];
             SDStation station = channelSettingsLineup.GetStationByID(stationID);

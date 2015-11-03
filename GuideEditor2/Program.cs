@@ -3,7 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using System.Security.Permissions;
-
+using ChannelEditingLib;
+using Microsoft.MediaCenter.Guide;
 namespace GuideEditor2
 {
     static class Program

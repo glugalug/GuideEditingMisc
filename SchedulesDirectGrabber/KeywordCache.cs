@@ -129,7 +129,7 @@ namespace SchedulesDirectGrabber
                 public MXFKeywordGroup ToKeywordGroup()
                 {
                     string groupName = this.GetId();
-                    string uid = string.Format("!KeywordGroup!GSD_{0}", keyword_.Replace(" ", ""));
+                    string uid = string.Format("!KeywordGroup!GSD{0}", keyword_.Replace(" ", ""));
                     List<string> kvIds = new List<string>();
                     foreach (int key in secondLevelKeywordIndex_.Values)
                     {
@@ -163,7 +163,8 @@ namespace SchedulesDirectGrabber
                 private string SecondLevelIndexToID(int index)
                 {
                     if (index < 100) return string.Format("k{0}", id_ * 100 + index);
-                    return string.Format("k{0}s{1}", id_, index);
+                    if (index < 10000) return string.Format("k{0}", id_ * 10000 + index);
+                    return string.Format("k{0}", id_ * 1000000 + index);
                 }
                 private int id_;
                 private Dictionary<string, int> secondLevelKeywordIndex_ = new Dictionary<string, int>();

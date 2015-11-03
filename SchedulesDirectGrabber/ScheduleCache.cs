@@ -31,16 +31,6 @@ namespace SchedulesDirectGrabber
             foreach (var schedule in schedulesByStation.Values)
                 foreach (var program in schedule.Values)
                     md5sByProgramID[program.programID] = program.md5;
-            HashSet<string> audioProperties = new HashSet<string>();
-            foreach (var schedule in schedulesByStation.Values)
-                foreach (var programEntry in schedule.Values)
-                    if (programEntry.audioProperties != null)
-                        audioProperties.UnionWith(programEntry.audioProperties);
-            foreach(string audioProperty in audioProperties)
-            {
-                Console.WriteLine(audioProperty);
-            }
-
             return ProgramCache.instance.GetProgramsByIDWithMD5(md5sByProgramID);
         }
 
@@ -110,6 +100,11 @@ namespace SchedulesDirectGrabber
             }
 
             return cachedSchedule_;
+        }
+
+        internal Dictionary<string, SortedDictionary<DateTime, SDStationScheduleProgramEntry>> cachedSchedule
+        {
+            get { return cachedSchedule_; }
         }
 
         private Dictionary<string, SortedDictionary<DateTime, SDStationScheduleProgramEntry>> cachedSchedule_ =
@@ -237,9 +232,14 @@ namespace SchedulesDirectGrabber
                 XmlAttributeOverrides myOverrides = new XmlAttributeOverrides();
                 myOverrides.Add(typeof(ScheduleSerializer), myAttributes); */
                 XmlSerializer entrySerializer = new XmlSerializer(typeof(MXFScheduleEntry)); 
-                foreach (var stationAndSchedules in scheduleCache.GetSchedulesByStation(new HashSet<string>(stationCache.GetStationIds())))
+                foreach (var stationAndSchedules in scheduleCache.cachedSchedule)
                 {
                     string stationId = stationAndSchedules.Key;
+                    if (!stationCache.IsStationIdLoaded(stationId))
+                    {
+                        Console.WriteLine("Skipping schedule for station $0 because it is not loaded!", stationId);
+                        continue;
+                    }
                     string mxfServiceId = stationCache.GetServiceIdByStationId(stationId);
                     var schedule = stationAndSchedules.Value;
                     if (schedule.Count == 0) continue;
@@ -249,6 +249,9 @@ namespace SchedulesDirectGrabber
                     bool isFirstElement = true;
                     foreach (var dateAndEntry in schedule)
                     {
+                        // Skip any schedule entry for which we were unable to download program info.
+                        if (!ProgramCache.instance.IsProgramLoaded(dateAndEntry.Value.programID))
+                            continue;
                         DateTime startTime = dateAndEntry.Key;
                         DateTime endTime = startTime.AddSeconds(dateAndEntry.Value.duration);
                         // Check for gap between the start of this entry and the end of the previous one.
@@ -428,6 +431,7 @@ namespace SchedulesDirectGrabber
             public bool Is3D() { return HasVideoProp("3d"); }
             public bool IsCC() { return HasAudioProp("cc"); }
             public bool IsDVS() { return HasAudioProp("dvs"); }
+            public bool IsSAP() { return HasAudioProp("SAP"); }
             public bool IsEnhanced() { return HasVideoProp("enhanced"); }
             public bool IsFinale() { return isPremiereOrFinale != null && isPremiereOrFinale.Contains("Finale"); }
             public bool IsHD() { return HasVideoProp("hdtv"); }
@@ -548,11 +552,10 @@ namespace SchedulesDirectGrabber
                 set { throw new NotImplementedException(); }
             }
 
-            // Can't find this property in SchedulesDirect data.  Interestingly it isn't in the MXF export from Rovi either.
             [XmlAttribute("isSap"), DataMember(EmitDefaultValue =false), DefaultValue(false)]
             public bool isSap
             {
-                get { return false; }  
+                get { return sdProgramEntry_.IsSAP() ; }  
                 set { throw new NotImplementedException(); }
             }
 

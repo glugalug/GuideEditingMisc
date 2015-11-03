@@ -63,15 +63,9 @@ namespace SchedulesDirectGrabber
             [DataMember(Name ="lineups")]
             public List<LineupConfig> lineups { get; set; }
 
-            internal string GetLineupMxfId(LineupConfig lineup)
-            {
-                return "l" + lineups.IndexOf(lineup).ToString();
-            }
-
             internal IEnumerable<MXFLineup> GetMXFLineups()
             {
-                foreach (var lineup in lineups)
-                    yield return new MXFLineup(lineup);
+                yield return new MXFLineup();
             }
 
             [DataMember(Name ="scannedLineups")]
@@ -127,6 +121,8 @@ namespace SchedulesDirectGrabber
                 return false;
             }
 
+            // TODO: This stuff blows up if TV setup is rerun and the list of scanned lineups changes.
+            // Detect this and reset that part of the config!
             public LineupConfig GetLineupConfigByID(string id)
             {
                 if (lineups == null) return null;
@@ -171,18 +167,6 @@ namespace SchedulesDirectGrabber
                         continue;
                     }
                     yield return station;
-                }
-            }
-
-            public IEnumerable<MXFChannel> GetMXFChannels(MXFLineup mxfLineup)
-            {
-                foreach (var station in sdChannelList.stations)
-                {
-                    var channelNumbers = EffectiveStationChannelNumbers(station.stationID);
-                    foreach(var channelNumber in channelNumbers)
-                    {
-                        yield return new MXFChannel(channelNumber, mxfLineup, station);
-                    }
                 }
             }
 
@@ -467,28 +451,32 @@ namespace SchedulesDirectGrabber
         public class MXFLineup
         {
             public MXFLineup() { }
-            public MXFLineup(LineupConfig lineup)
-            {
-                lineup_ = lineup;
-            }
+
+            [XmlIgnore]
+            internal const string mxfId = "l1";
 
             [XmlAttribute("id")]
             public string id {
-                get { return config.GetLineupMxfId(lineup_); }
+                get { return mxfId; }
                 set { throw new NotImplementedException(); }
             }
 
             [XmlAttribute("uid")]
             public string uid
             {
-                get { return "!Lineup!GSD" + lineup_.sdLineup.lineup; }
+                get { return "!Lineup!" + GetLineupIdSuffix(); }
                 set { throw new NotImplementedException(); }
+            }
+
+            public static string GetLineupIdSuffix()
+            {
+                return "GSD";
             }
 
             [XmlAttribute("name")]
             public string name
             {
-                get { return lineup_.sdLineup.name; }
+                get { return "SchedulesDirect lineup via Glugglug's SchedulesDirect Grabber"; }
                 set { throw new NotImplementedException(); }
             }
 
@@ -501,69 +489,72 @@ namespace SchedulesDirectGrabber
 
             // This is the only lowercased element name in the MXF format.  Typo in the documentation?
             [XmlArray("channels"), XmlArrayItem("Channel")]
-            public MXF.EnumerableSerializationWrapper<MXFChannel> channels
+            public MXFData.EnumerableSerializationWrapper<MXFChannel> channels
             {
-                get { return new MXF.EnumerableSerializationWrapper<MXFChannel>(lineup_.GetMXFChannels(this)); }
+                get { return new MXFData.EnumerableSerializationWrapper<MXFChannel>(StationCache.instance.GetMXFChannels()); }
                 set { throw new NotImplementedException(); }
             }
-
-            private LineupConfig lineup_;
-        }
-
-        public class MXFChannel
-        {
-            public MXFChannel() { }
-            internal MXFChannel(ChannelNumberConfig channelNumberConfig, MXFLineup mxfLineup, SDStation station)
+            public class MXFChannel
             {
-                channelNumberConfig_ = channelNumberConfig;
-                mxfLineup_ = mxfLineup;
-                station_ = station;
-            }
+                public MXFChannel() { }
+                internal MXFChannel(ChannelNumberConfig channelNumberConfig, SDStation station)
+                {
+                    channelNumberConfig_ = channelNumberConfig;
+                    station_ = station;
+                }
 
-            [XmlAttribute("uid")]
-            public string uid {
-                get { return string.Format("!Channel!{0}!{1}_{2}", mxfLineup_.uid, number, subNumber); }
-                set { throw new NotImplementedException(); }
-            }
+                [XmlAttribute("uid")]
+                public string uid
+                {
+                    get
+                    {
+                        return (channelNumberConfig_ != null)
+                          ? string.Format("!Channel!{0}{1}_{2}_{3}",
+                              MXFLineup.GetLineupIdSuffix(), station_.stationID, number, subNumber)
+                          : string.Format("!Channel!{0}{1}", MXFLineup.GetLineupIdSuffix(), station_.stationID);
+                    }
+                    set { throw new NotImplementedException(); }
+                }
 
-            [XmlAttribute("lineup")]
-            public string lineup {
-                get { return mxfLineup_.id; }
-                set { throw new NotImplementedException(); }
-            }
+                [XmlAttribute("lineup")]
+                public string lineup
+                {
+                    get { return MXFLineup.mxfId; }
+                    set { throw new NotImplementedException(); }
+                }
 
-            [XmlAttribute("service")]
-            public string service
-            {
-                get { return StationCache.instance.GetServiceIdByStationId(station_.stationID); }
-                set { throw new NotImplementedException(); }
-            }
+                [XmlAttribute("service")]
+                public string service
+                {
+                    get { return StationCache.instance.GetServiceIdByStationId(station_.stationID); }
+                    set { throw new NotImplementedException(); }
+                }
 
-            [XmlAttribute("matchName"), DataMember(EmitDefaultValue = false)]
-            public string matchName
-            {
-                get { return string.Empty; }  // TODO: the MXF format doc says DVBT:onid:tsid:sid or DVBS:sat:freq:onid:tsid:sid
-                                                // can be used for DVB
-                set { throw new NotImplementedException(); }
-            }
+                [XmlAttribute("matchName"), DataMember(EmitDefaultValue = false)]
+                public string matchName
+                {
+                    get { return string.Empty; }  // TODO: the MXF format doc says DVBT:onid:tsid:sid or DVBS:sat:freq:onid:tsid:sid
+                                                  // can be used for DVB
+                    set { throw new NotImplementedException(); }
+                }
 
-            [XmlAttribute("number"), DataMember(EmitDefaultValue = false), DefaultValue(-1)]
-            public int number
-            {
-                get { return (int)(channelNumberConfig_?.number ?? -1); }
-                set { throw new NotImplementedException(); }
-            }
+                [XmlAttribute("number"), DataMember(EmitDefaultValue = false), DefaultValue(-1)]
+                public int number
+                {
+                    get { return (int)(channelNumberConfig_?.number ?? -1); }
+                    set { throw new NotImplementedException(); }
+                }
 
-            [XmlAttribute("subNumber"), DataMember(EmitDefaultValue =false), DefaultValue(0)]
-            public int subNumber
-            {
-                get { return (int)(channelNumberConfig_?.subNumber ?? 0); }
-                set { throw new NotImplementedException(); }
-            }
+                [XmlAttribute("subNumber"), DataMember(EmitDefaultValue = false), DefaultValue(0)]
+                public int subNumber
+                {
+                    get { return (int)(channelNumberConfig_?.subNumber ?? 0); }
+                    set { throw new NotImplementedException(); }
+                }
 
-            private ChannelNumberConfig channelNumberConfig_;
-            private MXFLineup mxfLineup_;
-            private SDStation station_;
+                private ChannelNumberConfig channelNumberConfig_;
+                private SDStation station_;
+            }
         }
     }
     [DataContract]
@@ -600,6 +591,19 @@ namespace SchedulesDirectGrabber
         public override string ToString()
         {
             return (subNumber > 0) ? string.Format("{0}-{1}", number, subNumber) : number.ToString();
+        }
+
+        // OVerride Equals and GetHashCode so that ChannelNumbers can work properly in sets or as dictionary keys.
+        public override bool Equals(object obj)
+        {
+            ChannelNumberConfig other = obj as ChannelNumberConfig;
+            if (other == null) return false;
+            return other.number == this.number && other.subNumber == this.subNumber;
+        }
+
+        public override int GetHashCode()
+        {
+            return ToString().GetHashCode();
         }
     }
 

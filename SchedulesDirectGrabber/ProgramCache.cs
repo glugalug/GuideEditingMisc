@@ -352,6 +352,11 @@ namespace SchedulesDirectGrabber
             }
         }
 
+        internal bool IsProgramLoaded(string programID)
+        {
+            return programCache_.ContainsKey(programID);
+        }
+
         public class MXFProgram
         {
             const string kProgramIdMXFPrefix = "!Program!GSD";
@@ -376,7 +381,7 @@ namespace SchedulesDirectGrabber
                 }
                 if (isSeries)
                 {
-                    series = SeriesInfoCache.SeriesIDByProgramID(key_);
+                    series = SeriesInfoCache.instance.GetMxfSeriesIdBySdId(key_);
                 }
 
                 if (dbProgram.hasImages)

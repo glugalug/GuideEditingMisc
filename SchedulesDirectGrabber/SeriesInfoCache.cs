@@ -110,8 +110,9 @@ namespace SchedulesDirectGrabber
 
         private Dictionary<string, int> mxfSeriesIdIndex_ = new Dictionary<string, int>();
 
-        string GetMxfSeriesIdBySDSeriesID(string sdSeriesId)
+        internal string GetMxfSeriesIdBySdId(string sdSeriesId)
         {
+            sdSeriesId = SeriesIDByProgramID(sdSeriesId);
             if (!mxfSeriesIdIndex_.ContainsKey(sdSeriesId))
             {
                 mxfSeriesIdIndex_[sdSeriesId] = mxfSeriesIdIndex_.Count + 1;
@@ -197,7 +198,7 @@ namespace SchedulesDirectGrabber
             // Should be of the form EP12345678, 10 characters.
             [DataMember(IsRequired = true), XmlAttribute("id")]
             public string mxfId {
-                get { return SeriesInfoCache.instance.GetMxfSeriesIdBySDSeriesID(dbSeriesInfo_.id); }
+                get { return SeriesInfoCache.instance.GetMxfSeriesIdBySdId(dbSeriesInfo_.id); }
                 set { throw new NotImplementedException(); }
             }
 
@@ -249,11 +250,12 @@ namespace SchedulesDirectGrabber
                 set { throw new NotImplementedException(); }
             }
 
+            // TODO: don't emit these when we don't actually have the date.
             [DataMember(EmitDefaultValue = false), XmlAttribute("startAirDate")]
-            public DateTime startAirDate { get; set; }
+            public string startAirDate { get { return null; } set { throw new NotImplementedException(); } }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("endAirDate")]
-            public DateTime endAirDate { get; set; }
+            public string endAirDate { get { return null; } set { throw new NotImplementedException(); } }
 
             [DataMember(EmitDefaultValue = false), XmlAttribute("guideImage")]
             public string guideImage

@@ -4,9 +4,12 @@ using System.Linq;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml.Serialization;
+using System.ComponentModel;
 
 namespace SchedulesDirectGrabber
 {
+    using MXFChannel = ConfigManager.MXFLineup.MXFChannel;
+
     public class StationCache
     {
         public static StationCache instance { get { return instance_; } }
@@ -27,13 +30,20 @@ namespace SchedulesDirectGrabber
         public HashSet<string> affiliates_ = new HashSet<string>();
         private ConfigManager.SDGrabberConfig config { get { return ConfigManager.config; } }
 
-        internal string GetServiceIdByStationId(string stationID)
+        internal string GetServiceIdByStationId(string stationId)
         {
-            if (!serviceIdByStationId_.ContainsKey(stationID))
+            if (!stationInfoByStationId_.ContainsKey(stationId))
+                throw new Exception("stationId not loaded:" + stationId);
+            if (!serviceIdByStationId_.ContainsKey(stationId))
             {
-                serviceIdByStationId_[stationID] = serviceIdByStationId_.Count + 1;
+                serviceIdByStationId_[stationId] = serviceIdByStationId_.Count + 1;
             }
-            return "s" + serviceIdByStationId_[stationID].ToString();
+            return "s" + serviceIdByStationId_[stationId].ToString();
+        }
+
+        internal bool IsStationIdLoaded(string stationId)
+        {
+            return stationInfoByStationId_.ContainsKey(stationId);
         }
 
         const string kAffiliateNamePrefix = "!Affiliate!";
@@ -81,6 +91,24 @@ namespace SchedulesDirectGrabber
             }
         }
 
+        public IEnumerable<MXFChannel> GetMXFChannels()
+        {
+            foreach(var stationIdAndInfo in stationInfoByStationId_)
+            {
+                string stationId = stationIdAndInfo.Key;
+                StationInfo stationInfo = stationIdAndInfo.Value;
+                var channelNumbers = stationInfo.guideChannelNumbers;
+                foreach (var channelNumber in channelNumbers)
+                {
+                    yield return new MXFChannel(channelNumber, stationInfo.sdStation);
+                }
+                if (channelNumbers.Count == 0)
+                {
+                    yield return new MXFChannel(null, stationInfo.sdStation);
+                }
+            }
+        }
+
         internal IEnumerable<MXFAffiliate> GetMXFAffiliates()
         {
             foreach(var affiliate in affiliates_)
@@ -109,6 +137,9 @@ namespace SchedulesDirectGrabber
             {
                 tuningConfigs_.AddRange(tuningConfigs);
             }
+
+            internal ISet<ChannelNumberConfig> guideChannelNumbers { get { return guideChannelNumbers_; } }
+            internal IEnumerable<TuningConfig> tuningConfigs { get{ return tuningConfigs_; } }
 
             public SDStation sdStation { get { return sdStation_; } }
             public MXFService mxfService { get { return new MXFService(sdStation); } }
@@ -193,7 +224,10 @@ namespace SchedulesDirectGrabber
                 uid = "!Service!GSD" + stationId;
                 name = sdStation.name;
                 callSign = sdStation.callsign;
-                affiliate = StationCache.instance.AddAffiliateAndGetId(sdStation.affiliate);
+                if (!string.IsNullOrEmpty(sdStation.affiliate))
+                {
+                    affiliate = StationCache.instance.AddAffiliateAndGetId(sdStation.affiliate);
+                }
                 if (sdStation.logo != null)
                 {
                     logoImage = ImageCache.instance.FindOrCreateMXFImageId(sdStation.logo.URL);
@@ -218,6 +252,7 @@ namespace SchedulesDirectGrabber
             [XmlAttribute("logoImage")]
             public string logoImage { get; set; }
         }
+
 
         public class MXFAffiliate
         {

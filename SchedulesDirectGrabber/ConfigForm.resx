@@ -117,18 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="RemoveAssociationCheckBox.HelpString" xml:space="preserve">
-    <value>Remove associations of other lineups (i.e. MCE Rovi lineups) with this set of tuners.  It is highly recommended to select this option to avoid WMC automatically reassigning channels back to other lineups during background scans.</value>
-  </data>
-  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
-  </metadata>
-  <data name="AssociateSchedulesDirectLineupCheckbox.HelpString" xml:space="preserve">
-    <value>Associate the selected SchedulesDirect lineup and tuners in Media Center, so it shows this as the guide source in the about screen and MAY automatically find channels during a background scan.  Could be especially useful for QAM</value>
-  </data>
   <metadata name="LogoCol.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
@@ -165,6 +153,18 @@
   <metadata name="IncludeInGuideCol.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="helpProvider1.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <data name="RemoveAssociationCheckBox.HelpString" xml:space="preserve">
+    <value>Remove associations of other lineups (i.e. MCE Rovi lineups) with this set of tuners.  It is highly recommended to select this option to avoid WMC automatically reassigning channels back to other lineups during background scans.</value>
+  </data>
+  <data name="AssociateSchedulesDirectLineupCheckbox.HelpString" xml:space="preserve">
+    <value>Associate the selected SchedulesDirect lineup and tuners in Media Center, so it shows this as the guide source in the about screen and MAY automatically find channels during a background scan.  Could be especially useful for QAM</value>
+  </data>
   <metadata name="LogoCol.UserAddedColumn" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>

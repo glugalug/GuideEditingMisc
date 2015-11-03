@@ -535,5 +535,26 @@ namespace SchedulesDirectGrabber
             selected_scanned_lineup_config.existingChannelCleanup =
                 (ScannedLineupConfig.ExistingChannelCleanupOption)ExistingChannelCleanupComboBox.SelectedIndex;
         }
+
+        private void ExcludeAllChannelsButton_Click(object sender, EventArgs e)
+        {
+            if (channelSettingsLineup == null) return;
+            foreach(var stationId in channelSettingsLineup.stationIDs)
+            {
+                channelSettingsLineup.GetStationOverrides(stationId).excludeFromDownload = true;
+            }
+            ChannelSettingsDataGridView.Invalidate();
+        }
+
+        private void IncludeAllChannelsButton_Click(object sender, EventArgs e)
+        {
+            if (channelSettingsLineup == null) return;
+            foreach (var stationId in channelSettingsLineup.stationIDs)
+            {
+                channelSettingsLineup.GetStationOverrides(stationId).excludeFromGuide = false;
+            }
+            channelSettingsLineup.PruneStationOverrides();
+            ChannelSettingsDataGridView.Invalidate();
+        }
     }
 }

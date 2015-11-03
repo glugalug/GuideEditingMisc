@@ -158,6 +158,29 @@ namespace SchedulesDirectGrabber
             [DataMember(Name = "stationOverrides")]
             public Dictionary<string, StationOverrideConfig> stationOverrides { get; set; }
 
+            public StationOverrideConfig GetStationOverrides(string stationId)
+            {
+                if (!sdChannelList_.GetStationsByID().ContainsKey(stationId))
+                {
+                    throw new Exception("stationId not in lineup");
+                }
+                if (!stationOverrides.ContainsKey(stationId))
+                {
+                    stationOverrides[stationId] = new StationOverrideConfig();
+                }
+                return stationOverrides[stationId];
+            }
+
+            internal void PruneStationOverrides()
+            {
+                List<string> stationIds = stationOverrides.Keys.ToList();
+                foreach(var stationId in stationIds)
+                {
+                    if (stationOverrides[stationId].IsPrunable())
+                        stationOverrides.Remove(stationId);                    
+                }
+            }
+
             public IEnumerable<SDStation> GetDownloadedStations()
             {
                 foreach (var station in sdChannelList.stations)
@@ -367,30 +390,12 @@ namespace SchedulesDirectGrabber
 
             internal void SetExcludedFromDownload(string stationID, bool exclude)
             {
-                if (!stationOverrides.ContainsKey(stationID))
-                {
-                    stationOverrides[stationID] = new StationOverrideConfig();
-                }
-                stationOverrides[stationID].excludeFromDownload = exclude;
-                // Excluded from download implies also excluded from guide
-                if (exclude)
-                {
-                    stationOverrides[stationID].excludeFromGuide = true;
-                }
+                GetStationOverrides(stationID).excludeFromDownload = exclude;
             }
 
             internal void SetExcludedFromGuide(string stationID, bool exclude)
             {
-                if (!stationOverrides.ContainsKey(stationID))
-                {
-                    stationOverrides[stationID] = new StationOverrideConfig();
-                }
-                stationOverrides[stationID].excludeFromGuide = exclude;
-                if (!exclude)
-                {
-                    // If in guide, must also be downloaded.
-                    stationOverrides[stationID].excludeFromDownload = false;
-                }
+                GetStationOverrides(stationID).excludeFromGuide = exclude;
             }
         }
 
@@ -402,9 +407,18 @@ namespace SchedulesDirectGrabber
             [DataMember(Name = "sdServiceId", IsRequired =true)]
             public string sdServiceId { get; set; }
             [DataMember(Name = "excludeFromDownload")]
-            public bool excludeFromDownload { get; set; }
+            public bool excludeFromDownload
+            {
+                get { return excludeFromDownload_; }
+                set { excludeFromDownload_ = value; excludeFromGuide_ = excludeFromGuide_ || value; }
+            }
+            private bool excludeFromDownload_;
             [DataMember(Name = "excludeFromGuide")]
-            public bool excludeFromGuide { get; set; }
+            public bool excludeFromGuide {
+                get { return excludeFromGuide_; }
+                set { excludeFromGuide_ = value;  excludeFromDownload_ = excludeFromDownload_ && value; }
+            }
+            private bool excludeFromGuide_;
             // Note that the default values for these override members are **null**. 
             // The list should only be created if explicitly overridden, in which case
             // an empty List means the channel is either not tunable, or has no channel numbers to
@@ -413,6 +427,11 @@ namespace SchedulesDirectGrabber
             public List<ChannelNumberConfig> guideChannelNumbers { get; set; }
             [DataMember(Name = "tuningOverrides")]
             public List<TuningConfig> tuningOverrides { get; set; }
+
+            internal bool IsPrunable()
+            {
+                return !excludeFromDownload && !excludeFromGuide && guideChannelNumbers == null && tuningOverrides == null;
+            }
         }
 
         [DataContract]
@@ -428,9 +447,9 @@ namespace SchedulesDirectGrabber
             public long id { get; set; }
             [DataMember(Name = "sdLineupId")]
             public string sd_lineup_id;
-            [DataMember(Name = "addAssociation")]
+            [DataMember(Name = "addAssociation"), DefaultValue(true)]
             public bool addAssociation;
-            [DataMember(Name = "removeOtherAssociations")]
+            [DataMember(Name = "removeOtherAssociations"), DefaultValue(true)]
             public bool removeOtherAssociations;
 
             public enum ExistingChannelCleanupOption
@@ -440,7 +459,8 @@ namespace SchedulesDirectGrabber
                 DoNotRemoveExistingChannels
             }
 
-            [DataMember(Name = "existingChannelCleanup")]
+            [DataMember(Name = "existingChannelCleanup"),
+             DefaultValue(ExistingChannelCleanupOption.RemoveAutomaticallyAddedChannels)]
             public ExistingChannelCleanupOption existingChannelCleanup { get; set; }
         }
 

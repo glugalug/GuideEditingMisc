@@ -44,7 +44,11 @@ namespace SchedulesDirectGrabber
         internal static void ImportMxf()
         {
             BuildMxf();
-            MxfImporter.Import(new StreamReader("mxf.xml").BaseStream, ChannelEditing.object_store, MxfImportProgressCallback);
+            // var baseStream = new StreamReader("mxf.xml").BaseStream;
+            using (var xmlReader = XmlReader.Create("mxf.xml"))
+            {
+                MxfImporter.Import(xmlReader, ChannelEditing.object_store);
+            }
             //ChannelEditing.object_store.Import("mxf.xml", MxfImportProgressCallback);
         }
 
@@ -69,34 +73,35 @@ namespace SchedulesDirectGrabber
 
             void IXmlSerializable.WriteXml(XmlWriter writer)
             {
-                writer.WriteRaw(@"  <Assembly name=""mcepg"" version=""6.0.6000.0"" cultureInfo="""" publicKey=""0024000004800000940000000602000000240000525341310004000001000100B5FC90E7027F67871E773A8FDE8938C81DD402BA65B9201D60593E96C492651E889CC13F1415EBB53FAC1131AE0BD333C5EE6021672D9718EA31A8AEBD0DA0072F25D87DBA6FC90FFD598ED4DA35E44C398C454307E8E33B8426143DAEC9F596836F97C8F74750E5975C64E2189F45DEF46B2A2B1247ADC3652BF5C308055DA9"">
-    <NameSpace name = ""Microsoft.MediaCenter.Guide"" >
-      <Type name = ""Lineup"" />
-      <Type name = ""Channel"" parentFieldName = ""lineup"" />
-      <Type name = ""Service"" />
-      <Type name = ""ScheduleEntry"" groupName = ""ScheduleEntries"" />
-      <Type name = ""Program"" />
-      <Type name = ""Keyword"" />
-      <Type name = ""KeywordGroup"" />
-      <Type name = ""Person"" groupName = ""People"" />
-      <Type name = ""ActorRole"" parentFieldName = ""program"" />
-      <Type name = ""DirectorRole"" parentFieldName = ""program"" />
-      <Type name = ""WriterRole"" parentFieldName = ""program"" />
-      <Type name = ""HostRole"" parentFieldName = ""program"" />
-      <Type name = ""GuestActorRole"" parentFieldName = ""program"" />
-      <Type name = ""ProducerRole"" parentFieldName = ""program"" />
-      <Type name = ""GuideImage"" />
-      <Type name = ""Affiliate"" />
-      <Type name = ""SeriesInfo"" />
-      <Type name = ""Season"" />
-    </NameSpace >
-  </Assembly >
-  <Assembly name = ""mcstore"" version = ""6.0.6000.0"" cultureInfo = """" publicKey = ""0024000004800000940000000602000000240000525341310004000001000100B5FC90E7027F67871E773A8FDE8938C81DD402BA65B9201D60593E96C492651E889CC13F1415EBB53FAC1131AE0BD333C5EE6021672D9718EA31A8AEBD0DA0072F25D87DBA6FC90FFD598ED4DA35E44C398C454307E8E33B8426143DAEC9F596836F97C8F74750E5975C64E2189F45DEF46B2A2B1247ADC3652BF5C308055DA9"" >
-    <NameSpace name = ""Microsoft.MediaCenter.Store"" >
-      <Type name = ""Provider"" />
-      <Type name = ""UId"" parentFieldName = ""target"" />
-    </NameSpace >
-  </Assembly > ");
+                writer.WriteRaw(@"	<Assembly name=""mcepg"" version=""6.1.0.0"" cultureinfo="""" publicKey=""0024000004800000940000000602000000240000525341310004000001000100B5FC90E7027F67871E773A8FDE8938C81DD402BA65B9201D60593E96C492651E889CC13F1415EBB53FAC1131AE0BD333C5EE6021672D9718EA31A8AEBD0DA0072F25D87DBA6FC90FFD598ED4DA35E44C398C454307E8E33B8426143DAEC9F596836F97C8F74750E5975C64E2189F45DEF46B2A2B1247ADC3652BF5C308055DA9"">
+        <NameSpace name=""Microsoft.MediaCenter.Guide"" >
+            <Type name=""Lineup"" />
+            <Type name=""Channel"" parentFieldName=""lineup"" />
+            <Type name=""Service"" />
+            <Type name=""ScheduleEntry"" groupName=""ScheduleEntries"" />
+            <Type name=""Program"" />
+            <Type name=""Keyword"" />
+            <Type name=""KeywordGroup"" />
+            <Type name=""Person"" groupName = ""People"" />
+            <Type name=""ActorRole"" parentFieldName = ""program"" />
+            <Type name=""DirectorRole"" parentFieldName = ""program"" />
+            <Type name=""WriterRole"" parentFieldName = ""program"" />
+            <Type name=""HostRole"" parentFieldName = ""program"" />
+            <Type name=""GuestActorRole"" parentFieldName = ""program"" />
+            <Type name=""ProducerRole"" parentFieldName = ""program"" />
+            <Type name=""GuideImage"" />
+            <Type name=""Affiliate"" />
+            <Type name=""SeriesInfo"" />
+            <Type name=""Season"" />
+        </NameSpace >
+    </Assembly >
+    <Assembly name=""mcstore"" version=""6.1.0.0"" cultureinfo="""" publicKey=""0024000004800000940000000602000000240000525341310004000001000100B5FC90E7027F67871E773A8FDE8938C81DD402BA65B9201D60593E96C492651E889CC13F1415EBB53FAC1131AE0BD333C5EE6021672D9718EA31A8AEBD0DA0072F25D87DBA6FC90FFD598ED4DA35E44C398C454307E8E33B8426143DAEC9F596836F97C8F74750E5975C64E2189F45DEF46B2A2B1247ADC3652BF5C308055DA9"" >
+        <NameSpace name=""Microsoft.MediaCenter.Store"" >
+            <Type name=""Provider"" />
+            <Type name=""UId"" parentFieldName=""target"" />
+        </NameSpace >
+    </Assembly >
+");
             }
         }
 
@@ -145,7 +150,7 @@ namespace SchedulesDirectGrabber
             public string name = "GlugglugsSchedulesDirectGrabber";
 
             [DataMember, XmlAttribute("displayName")]
-            public string displayName = "Glugglug's SchedulesDirect Grabber";
+            public string displayName = "Glugglugs SchedulesDirect Grabber";
 
             [DataMember, XmlAttribute("copyright")]
             public string copyright = "copyright placeholder";
@@ -157,7 +162,7 @@ namespace SchedulesDirectGrabber
             public ProviderData()
             {
                 // Loop through all the enumerations top level first to get everything generated before serialization.
-               // foreach (var lineup in lineups) { }
+                foreach (var lineup in lineups) { }
                 foreach (var service in services) { }
                 foreach (var affiliate in affiliates) { }
                 foreach (var program in programs) { }
@@ -169,60 +174,59 @@ namespace SchedulesDirectGrabber
                 // foreach (var season in seasons) { } we don't actually have seasons
             }
 
-            [DataMember, XmlAttribute("provider")]
+            [DataMember(Order = 0), XmlAttribute("provider")]
             public string id = providerID;
 
-            [DataMember, XmlArray("Keywords"), XmlArrayItem("Keyword")]
+            [DataMember(Order =1), XmlArray("Keywords",Order =1), XmlArrayItem("Keyword")]
             public EnumerableSerializationWrapper<KeywordCache.MXFKeyword> keywords {
                 get { return new EnumerableSerializationWrapper<KeywordCache.MXFKeyword>(
                         KeywordCache.instance.keywords.keywords); }
                 set { throw new NotImplementedException(); }
             }
 
-            [DataMember, XmlArray("KeywordGroups"), XmlArrayItem("KeywordGroup")]
+            [DataMember(Order = 2), XmlArray("KeywordGroups", Order =2), XmlArrayItem("KeywordGroup")]
             public EnumerableSerializationWrapper<KeywordCache.MXFKeywordGroup> keywordGroups {
                 get { return new EnumerableSerializationWrapper<KeywordCache.MXFKeywordGroup>(
                         KeywordCache.instance.keywordGroups.keywordGroups); }
                 set { throw new NotImplementedException(); }
             }
 
-            [XmlArray("GuideImages"), XmlArrayItem("GuideImage")]
+            [DataMember(Order =3), XmlArray("GuideImages", Order =3), XmlArrayItem("GuideImage")]
             public EnumerableSerializationWrapper<ImageCache.MXFGuideImage> guideImages =
                 new EnumerableSerializationWrapper<ImageCache.MXFGuideImage>(ImageCache.instance.GetMXFGuideImages());
 
-            [DataMember, XmlArray("People"), XmlArrayItem("Person")]
+            [DataMember(Order = 4), XmlArray("People",Order =4), XmlArrayItem("Person")]
             public EnumerableSerializationWrapper<PersonCache.MXFPerson> people =
                 new EnumerableSerializationWrapper<PersonCache.MXFPerson>(PersonCache.instance.GetPersonEnumeration());
 
-            [DataMember, XmlArray("SeriesInfos"), XmlArrayItem("SeriesInfo")]
+            [DataMember(Order = 5), XmlArray("SeriesInfos",Order =5), XmlArrayItem("SeriesInfo")]
             public EnumerableSerializationWrapper<SeriesInfoCache.MXFSeriesInfo> seriesInfos =
                 new EnumerableSerializationWrapper<SeriesInfoCache.MXFSeriesInfo>(
                     SeriesInfoCache.instance.GetMXFSeriesEnumeration());
 
-            [DataMember, XmlElement(ElementName = "Seasons")]
+            [DataMember(Order = 6), XmlElement(ElementName = "Seasons",Order =6)]
             public Seasons seasons = new Seasons();
 
-            [DataMember, XmlArray("Programs"), XmlArrayItem("Program")]
+            [DataMember(Order = 7), XmlArray("Programs", Order =7), XmlArrayItem("Program")]
             public EnumerableSerializationWrapper<ProgramCache.MXFProgram> programs =
                 new EnumerableSerializationWrapper<ProgramCache.MXFProgram>(
                     ProgramCache.instance.GetMXFPrograms());
 
-            [XmlArray("Affiliates"), XmlArrayItem("Affiliate")]
+            [DataMember(Order = 8), XmlArray("Affiliates", Order =8), XmlArrayItem("Affiliate")]
             public EnumerableSerializationWrapper<StationCache.MXFAffiliate> affiliates =
                 new EnumerableSerializationWrapper<StationCache.MXFAffiliate>(StationCache.instance.GetMXFAffiliates());
 
-            [XmlArray("Services"), XmlArrayItem("Service")]
+            [DataMember(Order = 9), XmlArray("Services", Order =9), XmlArrayItem("Service")]
             public EnumerableSerializationWrapper<StationCache.MXFService> services =
                 new EnumerableSerializationWrapper<StationCache.MXFService>(StationCache.instance.GetMXFServices());
 
-            [XmlAnyElement]
+            [DataMember(Order = 10), XmlAnyElement(Order =10)]
             public ScheduleCache.ScheduleSerializer scheduleSerializer = new ScheduleCache.ScheduleSerializer();
 
-            [XmlArray("Lineups"), XmlArrayItem("Lineup")]
+            [DataMember(Order =11),XmlArray("Lineups", Order =11), XmlArrayItem("Lineup")]
             public EnumerableSerializationWrapper<ConfigManager.MXFLineup> lineups =
                 new EnumerableSerializationWrapper<ConfigManager.MXFLineup>(ConfigManager.config.GetMXFLineups());
 
-            [DataContract]
             public class Seasons
             {  // We don't actually geneate seasons data, so this is just empty.
             }

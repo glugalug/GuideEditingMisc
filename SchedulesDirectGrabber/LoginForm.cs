@@ -19,7 +19,7 @@ namespace SchedulesDirectGrabber
 
         private void ShowPasswordCheckbox_CheckedChanged(object sender, EventArgs e)
         {
-            PasswordTextBox.UseSystemPasswordChar = (sender as CheckBox).Checked;
+            PasswordTextBox.UseSystemPasswordChar = !(sender as CheckBox).Checked;
         }
 
         private void LoginButton_Click(object sender, EventArgs e)

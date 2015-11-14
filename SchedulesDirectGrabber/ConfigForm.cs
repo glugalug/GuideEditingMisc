@@ -107,7 +107,7 @@ namespace SchedulesDirectGrabber
                 string sdlineup_id = selected_scanned_lineup_config.sd_lineup_id;
                 foreach(object sdLineup in AssociatedSDLineupComboBox.Items)
                 {
-                    if (sdlineup_id == (sdLineup as SDLineup)?.lineup)
+                    if (sdlineup_id == (sdLineup as LineupConfig)?.sdLineup?.lineup)
                         AssociatedSDLineupComboBox.SelectedItem = sdLineup;
                 }
             } finally
@@ -120,8 +120,8 @@ namespace SchedulesDirectGrabber
         {
             if (updatingSDLineupAssociationsCombo_) return;
             var scanned_lineup_config = FindOrCreateConfigForSelectedScannedLineup();
-            var sd_lineup = (AssociatedSDLineupComboBox.SelectedItem as LineupConfig)?.sdLineup;
-            scanned_lineup_config.sd_lineup_id = sd_lineup.lineup;
+            var sd_lineup = AssociatedSDLineupComboBox.SelectedItem as LineupConfig;
+            scanned_lineup_config.sd_lineup_id = sd_lineup.sdLineup.lineup;
             AssociateSchedulesDirectLineupCheckbox.Enabled = sd_lineup != null;
             RemoveAssociationCheckBox.Enabled = sd_lineup != null;
             ResetConfigWMILineupCache();

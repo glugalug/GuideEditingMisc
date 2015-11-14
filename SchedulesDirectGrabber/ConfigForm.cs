@@ -132,7 +132,7 @@ namespace SchedulesDirectGrabber
             if (selected_scanned_lineup_config != null) return selected_scanned_lineup_config;
             ScannedLineupConfig scanned_lineup_config = new ScannedLineupConfig();
             scanned_lineup_config.id = selected_scanned_lineup.Id;
-            scanned_lineup_config.name = scanned_lineup_config.name;
+            scanned_lineup_config.name = selected_scanned_lineup.Name;
             config.scanned_lineups.Add(scanned_lineup_config);
             return scanned_lineup_config;
         }

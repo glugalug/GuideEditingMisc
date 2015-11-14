@@ -77,9 +77,6 @@
             // ShowPasswordCheckbox
             // 
             this.ShowPasswordCheckbox.AutoSize = true;
-            this.ShowPasswordCheckbox.Checked = true;
-            this.ShowPasswordCheckbox.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.ShowPasswordCheckbox.Enabled = false;
             this.ShowPasswordCheckbox.Location = new System.Drawing.Point(15, 78);
             this.ShowPasswordCheckbox.Name = "ShowPasswordCheckbox";
             this.ShowPasswordCheckbox.Size = new System.Drawing.Size(102, 17);

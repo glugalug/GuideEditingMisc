@@ -21,6 +21,14 @@ namespace SchedulesDirectGrabber
                         Misc.UidsToString(provider.UIds));
                 }
             }
+            using (Lineups lineups = new Lineups(ChannelEditing.object_store))
+            {
+                foreach(Lineup lineup in lineups)
+                {
+                    Console.WriteLine("Lineup ID: {0} Name: {1} UIDs: {2} Provider: {3}",
+                        lineup.Id, lineup.Name, Misc.UidsToString(lineup.UIds), lineup.Provider);
+                }
+            }
         }
 
         const string kProviderUIDValue = "GSDProvider";

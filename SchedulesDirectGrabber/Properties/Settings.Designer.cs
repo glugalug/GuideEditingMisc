@@ -25,7 +25,7 @@ namespace SchedulesDirectGrabber.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("SchedulesDirectGrabber.config.xml")]
+        [global::System.Configuration.DefaultSettingValueAttribute("SchedulesDirectGrabber.config.json")]
         public string ConfigPath {
             get {
                 return ((string)(this["ConfigPath"]));

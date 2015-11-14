@@ -30,8 +30,12 @@ namespace SchedulesDirectGrabber
             this.config_path_ = config_path;
             config_ = new SDGrabberConfig();
             try {
-                using (Stream input_stream = File.OpenRead(config_path_))
-                    config_ = (SDGrabberConfig)serializer_.ReadObject(input_stream);
+                using (Stream input_stream = File.OpenRead(config_path_)) {
+                    using (StreamReader reader = new StreamReader(input_stream))
+                    {
+                        config_ = JSONClient.Deserialize<SDGrabberConfig>(reader.ReadToEnd());
+                    }
+                }
                 if (config_.lineups == null) config_.lineups = new List<LineupConfig>();
                 if (config_.scanned_lineups == null) config_.scanned_lineups = new List<ScannedLineupConfig>();
                 config_.ValidateScannedLineupConfigs();
@@ -44,7 +48,12 @@ namespace SchedulesDirectGrabber
         public void SaveConfig()
         {
             using (Stream output_stream = File.OpenWrite(config_path_))
-                serializer_.WriteObject(output_stream, config_);
+            {
+                byte[] bytes = Encoding.UTF8.GetBytes(JSONClient.Serialize(config_));
+                output_stream.Write(bytes, 0, bytes.Length);
+                output_stream.Flush();
+                output_stream.Close();
+            }
         }
 
         [DataContract]
@@ -461,7 +470,7 @@ namespace SchedulesDirectGrabber
 
             [DataMember(Name = "id", IsRequired = true)]
             public long id { get; set; }
-            [DataMember(Name = "name", IsRequired = true)]
+            [DataMember(Name = "name", IsRequired = true, EmitDefaultValue =true)]
             public string name { get; set; }
             [DataMember(Name = "sdLineupId")]
             public string sd_lineup_id;
@@ -499,7 +508,6 @@ namespace SchedulesDirectGrabber
 
         private SDGrabberConfig config_;
         private string config_path_;
-        private DataContractSerializer serializer_ = new DataContractSerializer(new SDGrabberConfig().GetType());
 
         public class MXFLineup
         {

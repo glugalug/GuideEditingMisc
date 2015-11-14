@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using Microsoft.MediaCenter.Store;
 
 namespace SchedulesDirectGrabber
 {
@@ -50,6 +51,27 @@ namespace SchedulesDirectGrabber
         public static string LimitString(string s, int maxLength)
         {
             return (s== null) ? null : (s.Length > maxLength) ? s.Substring(0, maxLength) : s;
+        }
+        public static string UidsToString(UIds uids)
+        {
+            if (uids == null) return null;
+            StringBuilder uidsStr = new StringBuilder();
+            foreach (UId uid in uids)
+            {
+                uidsStr.Append("UID: {");
+                uidsStr.AppendFormat("Id: {0} ", uid.Id);
+                uidsStr.AppendFormat("IdValue: {0}", uid.IdValue);
+                uidsStr.AppendLine("}");
+            }
+            return uidsStr.ToString();
+        }
+
+        public static bool UidsContainsIdValue(StoredObject storedObject, string idValue)
+        {
+            if (storedObject.UIds == null) return false;
+            foreach (UId uid in storedObject.UIds)
+                if (uid.IdValue == idValue) return true;
+            return false;
         }
     }
 

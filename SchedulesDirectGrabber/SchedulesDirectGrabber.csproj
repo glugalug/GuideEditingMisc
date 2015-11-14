@@ -117,6 +117,7 @@
     </Compile>
     <Compile Include="Misc.cs" />
     <Compile Include="PersonCache.cs" />
+    <Compile Include="ProviderCreator.cs" />
     <Compile Include="SDAccountManagement.cs" />
     <Compile Include="SDChannelReader.cs" />
     <Compile Include="SDLineupSelection.cs" />

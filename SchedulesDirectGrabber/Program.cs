@@ -70,6 +70,7 @@ namespace SchedulesDirectGrabber
                         }
                         List<SDProgram> programs = SDProgramFetcher.FetchPrograms(programIDs); */
             //            SDAccountManagement.AddLineupToAccount("USA-NY67791-QAM");
+            ProviderCreator.ListProviders();
             Application.Run(new ConfigForm(token_manager, status));
         }
     }

@@ -11,6 +11,7 @@ using ChannelEditingLib;
 using System.ComponentModel;
 using System.Runtime.Serialization;
 using System.Xml.Serialization;
+using System.Windows.Forms;
 
 namespace SchedulesDirectGrabber
 {
@@ -33,6 +34,7 @@ namespace SchedulesDirectGrabber
                     config_ = (SDGrabberConfig)serializer_.ReadObject(input_stream);
                 if (config_.lineups == null) config_.lineups = new List<LineupConfig>();
                 if (config_.scanned_lineups == null) config_.scanned_lineups = new List<ScannedLineupConfig>();
+                config_.ValidateScannedLineupConfigs();
             } catch (Exception ex)
             {
                 Misc.OutputException(ex);
@@ -141,6 +143,20 @@ namespace SchedulesDirectGrabber
                 return result;
             }
 
+            internal void ValidateScannedLineupConfigs()
+            {
+                for (int index = scanned_lineups.Count - 1; index >= 0; --index)
+                {
+                    var scanned_lineup = scanned_lineups[index];
+                    if (scanned_lineup.FindOrFixScannedLineupAssociation() == null)
+                    {
+                        MessageBox.Show(string.Format(
+                            "Could not find a scanned lineup matching the config with id {0} and name {1}, removing it!",
+                            scanned_lineup.id, scanned_lineup.name));
+                        scanned_lineups.RemoveAt(index);
+                    }
+                }
+            }
         }
 
         // Config associated with a SchedulesDirect lineup
@@ -445,6 +461,8 @@ namespace SchedulesDirectGrabber
 
             [DataMember(Name = "id", IsRequired = true)]
             public long id { get; set; }
+            [DataMember(Name = "name", IsRequired = true)]
+            public string name { get; set; }
             [DataMember(Name = "sdLineupId")]
             public string sd_lineup_id;
             [DataMember(Name = "addAssociation"), DefaultValue(true)]
@@ -462,6 +480,21 @@ namespace SchedulesDirectGrabber
             [DataMember(Name = "existingChannelCleanup"),
              DefaultValue(ExistingChannelCleanupOption.RemoveAutomaticallyAddedChannels)]
             public ExistingChannelCleanupOption existingChannelCleanup { get; set; }
+
+            internal Lineup FindOrFixScannedLineupAssociation()
+            {
+                var wmc_lineups = new Lineups(ChannelEditing.object_store);
+                foreach(Lineup lineup in wmc_lineups)
+                    if (lineup.Id == id) return lineup;
+                foreach(Lineup lineup in wmc_lineups)
+                    if (lineup.Name == name)
+                    {
+                        name = lineup.Name;
+                        MessageBox.Show("Scanned lineup with ID matching config not found, but matched by name.  Was TV Setup Rerun?");
+                        return lineup;
+                    }
+                return null;
+            }
         }
 
         private SDGrabberConfig config_;

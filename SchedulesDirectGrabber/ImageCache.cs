@@ -31,7 +31,8 @@ namespace SchedulesDirectGrabber
         // numbers assigned to each imageID for counting them in the MXF.
         // In some cases the key may be an url rather than an id.
         private Dictionary<string, int> imageIdIndex_ = new Dictionary<string, int>();
-
+        
+        //TODO: Match EP* images Ids against SH* and vice versa.
         public bool isImageLoaded(string imageID)
         {
             return imageCache_.ContainsKey(imageID);

@@ -31,7 +31,7 @@ namespace SchedulesDirectGrabber
         {
             if (!programIdIndex_.ContainsKey(key))
             {
-                programIdIndex_[key] = programIdIndex_.Count + 1;
+                programIdIndex_[key] = programIdIndex_.Count + 2;
             }
             return programIdIndex_[key].ToString();
         }

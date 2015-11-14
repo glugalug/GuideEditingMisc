@@ -46,7 +46,7 @@ namespace SchedulesDirectGrabber
             return stationInfoByStationId_.ContainsKey(stationId);
         }
 
-        const string kAffiliateNamePrefix = "!Affiliate!";
+        const string kAffiliateNamePrefix = "!Affiliate!GSD";
 
         private string GetIdForAffiliate(string affiliate)
         {
@@ -228,6 +228,7 @@ namespace SchedulesDirectGrabber
                 {
                     affiliate = StationCache.instance.AddAffiliateAndGetId(sdStation.affiliate);
                 }
+                else affiliate = StationCache.instance.AddAffiliateAndGetId("Cablecast");
                 if (sdStation.logo != null)
                 {
                     logoImage = ImageCache.instance.FindOrCreateMXFImageId(sdStation.logo.URL);

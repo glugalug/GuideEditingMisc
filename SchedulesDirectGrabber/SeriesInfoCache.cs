@@ -263,7 +263,9 @@ namespace SchedulesDirectGrabber
                 get
                 {
                     if (!dbSeriesInfo_.hasGuideImage) return null;
-                    return "IM" + ImageCache.GetSDImageIDByProgramID(mxfId);
+                    string imageId = ImageCache.GetSDImageIDByProgramID(dbSeriesInfo_.id);
+                    if (!ImageCache.instance.isImageLoaded(imageId)) return null;
+                    return ImageCache.instance.FindOrCreateMXFImageId(imageId);
                 }
                 set { throw new NotImplementedException(); }
             }

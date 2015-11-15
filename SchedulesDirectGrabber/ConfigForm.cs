@@ -486,6 +486,7 @@ namespace SchedulesDirectGrabber
         {
             //MXFData.BuildMxf();
             MXFData.ImportMxf();
+            GuideDataUpdater.instance.UpdateLineupAssociations();
         }
 
         private void ChannelSettingsDataGridView_ColumnHeaderMouseClick(object sender, DataGridViewCellMouseEventArgs e)

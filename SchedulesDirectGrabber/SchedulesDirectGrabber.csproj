@@ -105,7 +105,9 @@
   <ItemGroup>
     <Compile Include="Config.cs" />
     <Compile Include="DBManager.cs" />
+    <Compile Include="GuideDataUpdater.cs" />
     <Compile Include="KeywordCache.cs" />
+    <Compile Include="LineupUtil.cs" />
     <Compile Include="MXFData.cs" />
     <Compile Include="ImageCache.cs" />
     <Compile Include="JSONClient.cs" />

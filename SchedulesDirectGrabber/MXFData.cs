@@ -44,12 +44,12 @@ namespace SchedulesDirectGrabber
         internal static void ImportMxf()
         {
             BuildMxf();
-            // var baseStream = new StreamReader("mxf.xml").BaseStream;
-            using (var xmlReader = XmlReader.Create("mxf.xml"))
+            MxfImporter.Import(new StreamReader("mxf.xml").BaseStream, ChannelEditing.object_store, MxfImportProgressCallback);
+            //ChannelEditing.object_store.Import("mxf.xml", MxfImportProgressCallback);
+            /* using (var xmlReader = XmlReader.Create("mxf.xml"))
             {
                 MxfImporter.Import(xmlReader, ChannelEditing.object_store);
-            }
-            //ChannelEditing.object_store.Import("mxf.xml", MxfImportProgressCallback);
+            } */
         }
 
         private static bool MxfImportProgressCallback(int amountCompleted)

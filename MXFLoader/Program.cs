@@ -23,13 +23,6 @@ namespace MXFLoader
         [Option('s', "safe_mode", DefaultValue =false,
          HelpText = "Only make changes that the regular loadMXF would.  Things it misses may still be output.")]
         public bool safeMode { get; set; }
-        [Option("remove_duplicates", DefaultValue = false,
-         HelpText ="Attempt to remove duplicate schedule entries - NOT RECOMMENDED, THIS MAY CORRUPT THE GUIDE DB!")]
-        public bool removeDuplicates { get; set; }
-        [Option("remove_overlapping", DefaultValue = false,
-         HelpText = "Remove consecutive ScheduleEntrys with overlapping timeslots - NOT RECOMMENDED, MAY CORRUPT TEH GUIDE DB!"+
-            "This is a superset of what remove_overlapping does.")]
-        public bool removeOverlapping { get; set; }
         [Option("skip_listing_consistency", DefaultValue = false,
          HelpText ="Don't make listings assignments of Channels and MergedChannels consistent. Making them consistent avoids failed update "+
             "attempts from becoming infinitely recursive and crashing the import.  Ignored if -safe_mode is true")]

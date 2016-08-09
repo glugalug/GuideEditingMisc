@@ -282,18 +282,24 @@ namespace MXFLoader
                         lastMXFEndTime = storeEntry.EndTime;
                         if (mxfEntry.Program.Id != storeEntry.Program.Id)
                         {
-                            Util.Trace(TraceLevel.Warning, "Programs do not match after normal ScheduleEntriesToMerge, queueing update.  Store: {0} MXF: {1}", storeEntry, mxfEntry);
-                            if (!Program.options.safeMode)
+                            SeriesInfo mxfSeries = mxfEntry.Program.Series;
+                            SeriesInfo storeSeries = storeEntry.Program.Series;
+                            if (mxfSeries != null && storeSeries != null && mxfSeries.Id == storeSeries.Id && mxfEntry.Program.IsGeneric && !storeEntry.Program.IsGeneric)
                             {
-                                storeEntry.Program = mxfEntry.Program;
-                                MergeProgramsInjector.UpdateScheduleEntryFlags(mxfEntry, storeEntry);
-                                updates.Add(storeEntry);
+                                Util.Trace(TraceLevel.Info, "Skipping update because the MXF has a generic entry while DB already has a specific episode: store: {0} mxf: {1}", storeEntry, mxfEntry);
                             }
-                            ++mxfIndex;
-                            ++storeIndex;
-                            continue;
+                            else
+                            {
+                                Util.Trace(TraceLevel.Warning, "Programs do not match after normal ScheduleEntriesToMerge, queueing update.  Store: {0} MXF: {1}", storeEntry, mxfEntry);
+                                if (!Program.options.safeMode)
+                                {
+                                    storeEntry.Program = mxfEntry.Program;
+                                    MergeProgramsInjector.UpdateScheduleEntryFlags(mxfEntry, storeEntry);
+                                    updates.Add(storeEntry);
+                                }
+                            }
                         }
-                        if (!MergeProgramsInjector.ScheduleEntryFlagsMatch(storeEntry, mxfEntry))
+                        else if (!MergeProgramsInjector.ScheduleEntryFlagsMatch(storeEntry, mxfEntry))
                         {
                             Util.Trace(TraceLevel.Warning, "Mismatched scheduleEntry flags found, queueing update.  store: {0} MXF: {1}", storeEntry, mxfEntry);
                             if (!Program.options.safeMode)
@@ -302,12 +308,12 @@ namespace MXFLoader
                                 // MS MergeScheduleEntries treats this as an add/remove rather than an update.  I don't like this, hopefully
                                 // this way can work.
                                 updates.Add(storeEntry);
-                                ++mxfIndex;
-                                ++storeIndex;
-                                continue;
                             }
                         }
-                        Util.Trace(TraceLevel.Verbose, "Entry for store and MXF already match: {0}", storeEntry);
+                        else
+                        {
+                            Util.Trace(TraceLevel.Verbose, "Entry for store and MXF already match: {0}", storeEntry);
+                        }
                         ++mxfIndex;
                         ++storeIndex;
                         continue;

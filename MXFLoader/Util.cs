@@ -1,4 +1,5 @@
-﻿using Microsoft.MediaCenter.Store;
+﻿using Microsoft.MediaCenter.Pvr;
+using Microsoft.MediaCenter.Store;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -28,9 +29,14 @@ namespace MXFLoader
                     }
                     string FriendlyName = Encoding.ASCII.GetString(bytes);
                     string clientId = Microsoft.MediaCenter.Store.ObjectStore.GetClientId(true);
+                    Console.WriteLine("ClientID={0}", clientId);
                     byte[] buffer = Encoding.Unicode.GetBytes(clientId);
                     string DisplayName = Convert.ToBase64String(new SHA256Managed().ComputeHash(buffer));
-                    object_store_ = Microsoft.MediaCenter.Store.ObjectStore.Open("", FriendlyName, DisplayName, true);
+                    ObjectStore.FriendlyName = FriendlyName;
+                    ObjectStore.DisplayName = DisplayName;
+                    object_store_ = ObjectStore.DefaultSingleton; //Microsoft.MediaCenter.Store.ObjectStore.Open("", FriendlyName, DisplayName, true);
+                    Util.Trace(TraceLevel.Info, "ObjectStore instance created with FriendlyName='{0}' DisplayName='{1}'",
+                        ObjectStore.FriendlyName, ObjectStore.DisplayName);
                 }
                 return object_store_;
             }

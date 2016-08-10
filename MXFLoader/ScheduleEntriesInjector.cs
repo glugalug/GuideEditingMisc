@@ -395,7 +395,10 @@ namespace MXFLoader
 
                 if (!Program.options.safeMode && updates.Count + adds.Count + deletes.Count > 0)
                 {
-                    ApplyMergedScheduleEntriesToStore(targetService, updates, adds, deletes);
+                    List<ScheduleEntry> emptyList = new List<ScheduleEntry>();
+                    ApplyMergedScheduleEntriesToStore(targetService, emptyList, emptyList, deletes);
+                    ApplyMergedScheduleEntriesToStore(targetService, updates, emptyList, emptyList);
+                    ApplyMergedScheduleEntriesToStore(targetService, emptyList, adds, emptyList);
                 }
             }
             finally

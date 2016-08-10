@@ -1,6 +1,7 @@
 ﻿using CommandLine;
 using CommandLine.Text;
 using Microsoft.MediaCenter.Guide;
+using Microsoft.MediaCenter.Pvr;
 using Microsoft.MediaCenter.Store;
 using Microsoft.MediaCenter.Store.MXF;
 using System;
@@ -12,6 +13,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace MXFLoader
 {
@@ -49,21 +51,57 @@ namespace MXFLoader
     class Program
     {
         public static Options options = new Options();
-        static void Main(string[] args)
+
+        [STAThread]
+        static int Main(string[] args)
         {
-            if (!CommandLine.Parser.Default.ParseArguments(args, options))
+            AppDomain currentDomain = AppDomain.CurrentDomain;
+            currentDomain.UnhandledException += new UnhandledExceptionEventHandler(UnhandledExceptionHandler);
+            Application.SetUnhandledExceptionMode(UnhandledExceptionMode.CatchException);
+            Application.ThreadException += new System.Threading.ThreadExceptionEventHandler(UnhandledThreadExceptionHandler);
+            //ObjectStore.WaitForThenBlockBackgroundThreads(10000);
+            try
             {
-                Console.WriteLine("Invalid command line options: {0}", options.GetUsage());
-                return;
+
+                if (!CommandLine.Parser.Default.ParseArguments(args, options))
+                {
+                    Console.WriteLine("Invalid command line options: {0}", options.GetUsage());
+                    return -1;
+                }
+                ScheduleEntriesInjector.InjectReplacementScheduleEntriesMethods();
+                //MergeProgramsInjector.ReplaceMergePrograms();
+                MergeProgramsInjector.ReplaceCheckIfProgramsMatch();
+                //new SchedulerWorkerInjector().ReplaceThreadSetup();
+                ObjectStore objStore = Util.object_store;
+                MxfImporter.Import(new StreamReader(options.inputMxfPath).BaseStream, Util.object_store, MxfImportProgressCallback);
             }
-            ScheduleEntriesInjector.InjectReplacementScheduleEntriesMethods();
-            //MergeProgramsInjector.ReplaceMergePrograms();
-            MergeProgramsInjector.ReplaceCheckIfProgramsMatch();
-            MxfImporter.Import(new StreamReader(options.inputMxfPath).BaseStream, Util.object_store, MxfImportProgressCallback);
+            catch (Exception e) {
+                Console.WriteLine("Exception occurred: {0} {1}", e, e.StackTrace);
+                return -1;
+            }
+            finally
+            {
+              //  ObjectStore.UnblockBackgroundThreads();
+            }
             if (options.reindexWhenDone)
             {
                 reindexDatabase();
             }
+            return 0;
+        }
+
+        static void UnhandledThreadExceptionHandler(object sender, System.Threading.ThreadExceptionEventArgs e)
+        {
+            Console.WriteLine("Unhandled exception occured, Sender: {0}, exception: {1} message: {2} call stack: {3}",
+                sender, e.Exception, e.Exception.Message, e.Exception.StackTrace);
+            Util.Trace(TraceLevel.Error, "Unhandled exception occured, Sender: {0}, exception: {1} message: {2} call stack: {3}",
+                sender, e.Exception, e.Exception.Message, e.Exception.StackTrace);
+        }
+
+        static void UnhandledExceptionHandler(object sender, UnhandledExceptionEventArgs e)
+        {
+            Console.WriteLine("Unhandled exception occured, Sender: {0}, exception: {1}", sender, e.ExceptionObject);
+            Util.Trace(TraceLevel.Error, "Unhandled exception occured, Sender: {0}, exception: {1}", sender, e.ExceptionObject);
         }
 
         private static bool MxfImportProgressCallback(int amountCompleted)

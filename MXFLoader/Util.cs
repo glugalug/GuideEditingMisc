@@ -80,5 +80,19 @@ namespace MXFLoader
             }
             ObjectStore.Trace.WriteLine(level, formattedMessage, args);
         }
+
+        public static void WaitForBackgroundThreads()
+        {
+            Util.Trace(TraceLevel.Verbose, "Waiting for background threads.");
+            try
+            {
+                ObjectStore.WaitForThenBlockBackgroundThreads(int.MaxValue);
+            }
+            finally
+            {
+                ObjectStore.UnblockBackgroundThreads();
+            }
+            Util.Trace(TraceLevel.Verbose, "Done waiting for background threads.");
+        }
     }
 }

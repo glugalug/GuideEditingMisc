@@ -36,10 +36,6 @@ namespace MXFLoader
         [Option("reindex", DefaultValue =false,
          HelpText ="Kick off the ReindexSearchRoot task when import is completed.")]
         public bool reindexWhenDone { get; set; }
-        [Option("waitForBackgroundThreads", DefaultValue =false,
-         HelpText = "Wait for background threads between importing ScheduleEntries blocks, so that it is more clear which block is triggering a crash."+
-            "This will be very slow if you have many channels but could be useful for debugging.")]
-        public bool waitForBackgroundThreads { get; set; }
 
         [ParserState]
         public IParserState LastParserState { get; set; }
@@ -75,15 +71,12 @@ namespace MXFLoader
                 ScheduleEntriesInjector.InjectReplacementScheduleEntriesMethods();
                 //MergeProgramsInjector.ReplaceMergePrograms();
                 MergeProgramsInjector.ReplaceCheckIfProgramsMatch();
-                new SchedulerWorkerInjector().ReplaceThreadSetup();
+//                new SchedulerWorkerInjector().ReplaceThreadSetup();
                 StoredObjectsEnumeratorInjector.ReplaceUpdate();
                 ObjectStore objStore = Util.object_store;
                 MxfImporter.Import(new StreamReader(options.inputMxfPath).BaseStream, Util.object_store, MxfImportProgressCallback);
                 Console.WriteLine("Waiting for any background threads to complete.");
-                Util.Trace(TraceLevel.Verbose, "Waiting for background threads.");
-                ObjectStore.WaitForThenBlockBackgroundThreads(int.MaxValue);
-                ObjectStore.UnblockBackgroundThreads();
-                Util.Trace(TraceLevel.Verbose, "Done waiting for background threads.");
+                Util.WaitForBackgroundThreads();
             }
             catch (Exception e) {
                 Console.WriteLine("Exception occurred: {0} {1}", e, e.StackTrace);

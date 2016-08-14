@@ -212,7 +212,15 @@ namespace MXFLoader
         private void ReplacementMergeScheduleEntries(ScheduleEntry[] scheduleEntriesToMerge)
         {
             if (scheduleEntriesToMerge.Count() == 0) return; // nothing to do.
+            if (Program.options.waitForBackgroundThreads)
+            {
+                Util.Trace(TraceLevel.Verbose, "Waiting for background threads.");
+                ObjectStore.WaitForThenBlockBackgroundThreads(int.MaxValue);
+                ObjectStore.UnblockBackgroundThreads();
+                Util.Trace(TraceLevel.Verbose, "Done waiting for background threads.");
+            }
             Service targetService = scheduleEntriesToMerge[0].Service;
+            Util.Trace(TraceLevel.Info, "Processing schedule entries for {0}", targetService);
             long id = targetService.Id;
             FixServiceAssignmentsForServiceChannels(targetService);
             OriginalMergeScheduleEntries(scheduleEntriesToMerge);

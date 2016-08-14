@@ -58,9 +58,8 @@
       <Private>True</Private>
     </Reference>
     <Reference Include="mcepg, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
-      <HintPath>C:\Windows\ehome\mcepg.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
-      <Private>True</Private>
+      <HintPath>C:\Windows\ehome\mcepg.dll</HintPath>
     </Reference>
     <Reference Include="mcstore, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>C:\Windows\ehome\mcstore.dll</HintPath>
@@ -82,6 +81,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScheduleEntriesInjector.cs" />
     <Compile Include="SchedulerWorkerInjector.cs" />
+    <Compile Include="StoredObjectsEnumeratorInjector.cs" />
     <Compile Include="Util.cs" />
   </ItemGroup>
   <ItemGroup>

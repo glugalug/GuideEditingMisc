@@ -34,13 +34,13 @@ namespace MXFLoader
         static private ConstructorInfo mutexLockConstructor_ = null;
 
         [MethodImpl(MethodImplOptions.NoInlining)]
-        private void ReplacementThreadSetup()
+        internal virtual void ReplacementThreadSetup()
         {            
             schedulerField_.SetValue(this, new Scheduler(Util.object_store, ScheduleConflictSource.AutomaticUpdate));
             bulkUpdateLockField_.SetValue(this, mutexLockConstructor_.Invoke(new object[] { Util.object_store, Scheduler.SchedulerWorkerMutexName }));
         }
 
-        public void ReplaceThreadSetup()
+        internal void ReplaceThreadSetup()
         {
             Util.InjectMethod(typeof(SchedulerWorkerInjector).GetMethod("ReplacementThreadSetup", Util.KitchenSinkMethodBindingFlags).MethodHandle,
                 schedulerWorkerType_.GetMethod("ThreadSetup", Util.KitchenSinkMethodBindingFlags).MethodHandle);

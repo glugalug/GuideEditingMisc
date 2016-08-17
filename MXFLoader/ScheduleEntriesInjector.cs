@@ -38,6 +38,13 @@ namespace MXFLoader
         
         private static void ReplaceScheduleEntriesConstructor()
         {
+            if (Environment.OSVersion.Version.Major > 6 || Environment.OSVersion.Version.Minor > 1)
+            {
+                Util.Trace(TraceLevel.Info,
+                    "Not replacing ScheduleEntries constructor because this only seems to work with Windows 7.  " +
+                    "It is ultimately redundant with the ScheduleEntries.MergeScheduleEntries replacement.");
+                return;
+            }
             Util.Trace(TraceLevel.Info,"Replacing ScheduleEntries(ObjectStore) constructor");
             RuntimeMethodHandle targetConstructor = typeof(ScheduleEntries).GetConstructor(new Type[] { typeof(ObjectStore) }).MethodHandle;
             Util.InjectMethod(
@@ -142,9 +149,6 @@ namespace MXFLoader
 
         }
 
-        private const int kMaxRecursionDepth_ = 4;
-        private static int mergeRecursionDepth_ = 0;
-
         static private void UpdateChannelService(Channel ch, Service s)
         {
             if (ch.Service == null || ch.Service.Id != s.Id)
@@ -210,6 +214,11 @@ namespace MXFLoader
 
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void ReplacementMergeScheduleEntries(ScheduleEntry[] scheduleEntriesToMerge)
+        {
+            ReplacementMergeScheduleEntriesInner(scheduleEntriesToMerge);
+        }
+        [MethodImpl(MethodImplOptions.NoInlining)]
+        private void ReplacementMergeScheduleEntriesInner(ScheduleEntry[] scheduleEntriesToMerge)
         {
             if (scheduleEntriesToMerge.Count() == 0) return; // nothing to do.
             Util.WaitForBackgroundThreads();

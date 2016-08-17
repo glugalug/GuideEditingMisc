@@ -82,10 +82,6 @@ namespace MXFLoader
                 Console.WriteLine("Exception occurred: {0} {1}", e, e.StackTrace);
                 return -1;
             }
-            finally
-            {
-              //  ObjectStore.UnblockBackgroundThreads();
-            }
             if (options.reindexWhenDone)
             {
                 reindexDatabase();

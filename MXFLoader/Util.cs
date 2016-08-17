@@ -55,7 +55,6 @@ namespace MXFLoader
                 {
                     int* inj = (int*)methodToInject.Value.ToPointer() + 2;
                     int* tar = (int*)methodToReplace.Value.ToPointer() + 2;
-                    Console.WriteLine("\nVersion x86 Release\n");
                     *tar = *inj;
                 }
                 else
@@ -63,7 +62,6 @@ namespace MXFLoader
 
                     long* inj = (long*)methodToInject.Value.ToPointer() + 1;
                     long* tar = (long*)methodToReplace.Value.ToPointer() + 1;
-                    Console.WriteLine("\nVersion x64 Release\n");
                     *tar = *inj;
                 }
             }

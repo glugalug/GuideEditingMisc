@@ -217,6 +217,14 @@ namespace MXFLoader
         {
             ReplacementMergeScheduleEntriesInner(scheduleEntriesToMerge);
         }
+
+        private static int CompareScheduleEntryStartTimes(ScheduleEntry entry1, ScheduleEntry entry2)
+        {
+            if (entry1.StartTime < entry2.StartTime) return -1;
+            if (entry2.StartTime < entry1.StartTime) return 1;
+            return 0;
+        }
+
         [MethodImpl(MethodImplOptions.NoInlining)]
         private void ReplacementMergeScheduleEntriesInner(ScheduleEntry[] scheduleEntriesToMerge)
         {
@@ -226,6 +234,7 @@ namespace MXFLoader
             Util.Trace(TraceLevel.Info, "Processing schedule entries for {0}", targetService);
             long id = targetService.Id;
             FixServiceAssignmentsForServiceChannels(targetService);
+            Util.WaitForBackgroundThreads();
             OriginalMergeScheduleEntries(scheduleEntriesToMerge);
             Util.WaitForBackgroundThreads();
 
@@ -236,6 +245,7 @@ namespace MXFLoader
                 mutex = targetService.AcquireUpdateLock();
                 List<ScheduleEntry> storeEntries =
                     GetScheduleEntriesForService(new ScheduleEntries(self.ObjectStore), targetService);
+                storeEntries.Sort(CompareScheduleEntryStartTimes);
                 Util.Trace(TraceLevel.Verbose, "store: {0} mxf: {1}", 
                     ListScheduleEntrys(storeEntries), ListScheduleEntrys(scheduleEntriesToMerge));
 

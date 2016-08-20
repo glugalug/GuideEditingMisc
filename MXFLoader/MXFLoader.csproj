@@ -59,6 +59,7 @@
     </Reference>
     <Reference Include="mcepg, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>C:\Windows\ehome\mcepg.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="mcstore, Version=6.1.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>C:\Windows\ehome\mcstore.dll</HintPath>
